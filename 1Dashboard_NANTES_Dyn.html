@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Dashboard temps réel des transports à Nantes - Configuration personnalisable">
+    <title>Dashboard Transport - Nantes</title>
+    <!-- Icône embarquée (source : icons/favicon.svg) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231a1a2e'/%3E%3Cstop offset='1' stop-color='%230f0f23'/%3E%3C/linearGradient%3E%3ClinearGradient id='bus' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2300f5ff'/%3E%3Cstop offset='1' stop-color='%23ff6b6b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23bg)'/%3E%3Cg fill='none' stroke='%2300f5ff' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M28.46 18.46A5 5 0 0 1 35.54 18.46'/%3E%3Cpath d='M24.93 14.93A10 10 0 0 1 39.07 14.93'/%3E%3C/g%3E%3Crect x='17' y='52' width='8' height='7' rx='2' fill='%23cfd8ff'/%3E%3Crect x='39' y='52' width='8' height='7' rx='2' fill='%23cfd8ff'/%3E%3Crect x='13' y='25' width='38' height='29' rx='7' fill='url(%23bus)'/%3E%3Crect x='18' y='30' width='28' height='10' rx='2.5' fill='%230f0f23'/%3E%3Ccircle cx='21' cy='47' r='2.6' fill='%230f0f23'/%3E%3Ccircle cx='43' cy='47' r='2.6' fill='%230f0f23'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFGUlEQVR4nLRXX0wcZRD/7d7e3h09akvLwdGEYqTkQKBQTQupNU20Io0mmkZjYkqNoInGakwfNGnSGms0jQ8+tA+NwT408cUaeKCW0liTqlSNSUstUOR/YyRQEBZogdu/zn53e9zt7QIX6yRkvm9mvvk/w56AJCgqqtqwtKS9z3GoMQxUEQ4ZdODoYGITku8Z0O8S7iL8qyyLX0hSl2TZ5KxDfn5FPc+jmeQLLJqlxA52ut3oKvJjZLZpcrK3PeFAOLy9DtAv/YcIM6YD2v7Jyf52rrCwYqOqoofoYbcIHxTd5syYLPMVvKJwh+zGYx6mKnkQdFuZCkTRaBDoXmPJJT+2wJ4+E7RQLqLPPAW5usokwnv9BnwdV+CZmnKUd+8RvYbLzy8fJebWtdZw4cALuHfsQxh+H4TBYVMSavEj4BaXEDxxEv7zLWvuBQrvDhcOVxhrraHyaCmm287D/20rgsc/hR7Oi2VpfAL3ThxH9MXnsGH/AXh7b6+oJ6UslAEjk+6VyQmPJEH68hTU0gjjCbd6sP7NwzByN0P4oztNT5rRJP283cPVaujt7kW0dhf0nBwEP/4MwU9OQs8LQanduapxJ/0sA2uJ/P+iCytFnindudFWlhdW81iLlIDfsR38+mwIug5e0+AlHk9nhukuGHocG/DEsTo7h+n+IUwN30nRr9O75Luwksfqu2/B09QAH61KHykWVYXOGp1jWNRUxhPpz6/FMLszusbOt9o60Nly0bUMvNsm08siEBsPIqAoCJgGFHkZKxZWCCvIUmM4xqc78QNMXsET+/agaNvDKfrTesCpVp7qSqbMR9HMHjmK+1eugnOZ5zQgHZHHK/HSG6+yzG0pyMPowIjjdPD2yBO1ycpiEfhlGQtXO9duPKYEAzd6KDMqe58tel1HU3BKC5t3XWMpNusKwpmCFjduZlCgLLjtBdcpMB/FHMjcuAUB1qAKTYvuuhF5tynw0rhYjRd6spbVNRN4rDKSaFQzGDtYdgW3+TcfmTX0koKdH7wH8cjbiVH0MxwfTdao5sgpy6Ma5/vpLCpqigP2jLtOgUA9YEZgzXnMiHVW084peyLJCZNvZtOefgsLrp5peqIJJ679jpEffkLZnhqUVpW5ZsJPTt+8eRs/X+/GvooS7N22lfHNYJz2TSIDyZFbTC/LQGwP9LZcwOTQKOQZCTvKS1iEYjwjvqQNaP61/fgbBv6ewNzcPOqLwiwjgpo+BYl9k5W1+aPkyC0IbspBcXU5fORENu0Eg0Zq197d2JK7EQEy7mcZUBmfbUC2jjXk+LzQqO4vV0UQeSjI+K09g+ifnk2bNhNzoVDZOF3y7DXyrcvCK58fY0skpda2XS8meiA1E1aZZPpUq/vmMqYWo06NOEEZyH2aLsV2piormKa0FxYUIJSdDTEajUdMez7eaAFNdc2ElxcwPDOPo9//gj+lecd/RIQ6qQeMLjrX2RvRhL/6BqGOydj97PMJ7899dRrnzp6Gk/yhxsNoaHwHC3HZluZTuDZ+IaXmyfI0HF28x2OcIbbktqsXFu473p3k7bKLiwuuHytEkThOOCOMj/eNbtpU+jrPcy1Ou/pyeyt4+tHo8/kRjS6xu5uzHRdNWY5kAyS7iEvftThGHgPuNUnqG020fW5uSb1h8M10LLB77PZtlwxr/QYkGOM4o2lmZoj9OPUsp++fQVEMnuV5QSbZKL3JJrxuJSMr0W3G75oNR+SvAfWgJI10W3L/AgAA//+hmI+LAAAABklEQVQDAJp9/cgMG0TfAAAAAElFTkSuQmCC">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    
+    <style>
+        :root {
+            --primary-bg: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
+            --widget-bg: rgba(255, 255, 255, 0.05);
+            --widget-hover: rgba(255, 255, 255, 0.1);
+            --accent-color: #00f5ff;
+            --accent-secondary: #ff6b6b;
+            --text-color: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --hover-bg: rgba(0, 245, 255, 0.1);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --border-radius: 16px;
+            --spacing: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-bg);
+            background-attachment: fixed;
+            color: var(--text-color);
+            min-height: 100vh;
+            padding: var(--spacing);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.02)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .header-widgets {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: calc(var(--spacing) * 1.5);
+        }
+
+        .header-widgets .base-widget {
+            width: 100%;
+        }
+
+        .base-widget {
+            background: var(--widget-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--glass-shadow);
+            padding: 12px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .base-widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .base-widget:hover {
+            transform: translateY(-4px);
+            background: var(--widget-hover);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+        }
+
+        .base-widget:hover::before {
+            opacity: 1;
+        }
+
+        .datetime-calendar-widget {
+            font-weight: 300;
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 24px;
+            align-items: center;
+            padding: 8px 20px !important;
+        }
+
+        .datetime-calendar-widget .datetime-section {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .datetime-calendar-widget .date-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .datetime-calendar-widget .day {
+            font-size: 2.2em;
+            line-height: 0.9;
+            font-weight: 100;
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .datetime-calendar-widget .month {
+            font-size: 0.75em;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 500;
+        }
+
+        .datetime-calendar-widget .time-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-left: 1px solid var(--border-color);
+            padding-left: 20px;
+        }
+
+        .datetime-calendar-widget .digital-time {
+            font-size: 1.6em;
+            font-weight: 100;
+            background: linear-gradient(135deg, var(--accent-color), #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            letter-spacing: 0.05em;
+        }
+
+        .datetime-calendar-widget .time-label {
+            font-size: 0.6em;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 500;
+        }
+
+        .datetime-calendar-widget .calendar-section {
+            border-left: 1px solid var(--border-color);
+            padding-left: 24px;
+        }
+
+        .calendar-widget {
+            font-size: 0.7em;
+        }
+
+        .calendar-header {
+            font-weight: 600;
+            margin-bottom: 2px;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-size: 0.8em;
+        }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            margin-bottom: 1px;
+            text-align: center;
+        }
+
+        .calendar-weekday {
+            color: var(--text-secondary);
+            font-size: 0.7em;
+            font-weight: 500;
+            padding: 0 2px;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0 2px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            padding: 1px 2px;
+            line-height: 1.3;
+            border-radius: 4px;
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .calendar-day:hover {
+            background: var(--hover-bg);
+        }
+
+        .current-day {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+            color: #0f0f23;
+            font-weight: 600;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 245, 255, 0.3);
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing);
+        }
+
+        .config-section {
+            background: var(--widget-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--glass-shadow);
+            margin-bottom: var(--spacing);
+        }
+
+        .config-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .config-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-color), var(--text-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .config-button {
+            background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
+            color: #0f0f23;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9em;
+        }
+
+        .config-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 245, 255, 0.4);
+        }
+
+        .search-container {
+            margin-bottom: 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .stop-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .stop-selector::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .stop-selector::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        .stop-selector::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        .stop-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--widget-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .stop-item:hover {
+            background: var(--widget-hover);
+            border-color: var(--accent-color);
+        }
+
+        .stop-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent-color);
+        }
+
+        .stop-item label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.9em;
+        }
+
+        .transport-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: var(--spacing);
+        }
+
+        .widget {
+            background: var(--widget-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 16px;
+            box-shadow: var(--glass-shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .widget.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .widget.drag-over {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
+        }
+
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .widget:hover {
+            transform: translateY(-6px);
+            background: var(--widget-hover);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .widget:hover::before {
+            transform: scaleX(1);
+        }
+
+        .widget-header {
+            margin: 0 0 14px 0;
+            background: linear-gradient(135deg, var(--accent-color), var(--text-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .widget-header .drag-handle {
+            cursor: move;
+            touch-action: none; /* évite le défilement de la page pendant le glisser tactile */
+            color: var(--text-secondary);
+            font-size: 1.3em;
+            padding: 4px 8px;
+            transition: var(--transition);
+            opacity: 0.7;
+            flex-shrink: 0;
+            background: none;
+            -webkit-text-fill-color: var(--text-secondary);
+        }
+
+        .widget-header .drag-handle:hover {
+            color: var(--accent-color);
+            -webkit-text-fill-color: var(--accent-color);
+            opacity: 1;
+            transform: scale(1.15);
+        }
+
+        .widget-header .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .widget-header .drag-handle i {
+            color: inherit;
+            -webkit-text-fill-color: inherit;
+            margin: 0;
+        }
+
+        .widget-header .title {
+            flex: 1;
+            text-align: center;
+        }
+
+        .widget-header .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .widget-header i {
+            margin-right: 6px;
+            color: var(--accent-color);
+        }
+
+        .filter-button, .remove-button {
+            background: rgba(0, 245, 255, 0.1);
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+
+        .filter-button:hover, .remove-button:hover {
+            background: rgba(0, 245, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .remove-button {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--accent-secondary);
+            color: var(--accent-secondary);
+        }
+
+        .remove-button:hover {
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        .filter-button.active {
+            background: var(--accent-color);
+            color: #0f0f23;
+        }
+
+        .filter-button i, .remove-button i {
+            font-size: 0.9em;
+        }
+
+        .filter-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: none;
+        }
+
+        .filter-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .widget-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .refresh-bar {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding: 0 0 10px 0;
+        }
+
+        .refresh-button {
+            background: rgba(0, 245, 255, 0.07);
+            border: 1px solid rgba(0, 245, 255, 0.35);
+            color: var(--accent-color);
+            padding: 7px 16px;
+            border-radius: 8px;
+            cursor: default;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            opacity: 0.6;
+        }
+
+        .refresh-button.ready {
+            opacity: 1;
+            cursor: pointer;
+            background: rgba(0, 245, 255, 0.14);
+        }
+
+        .refresh-button.ready:hover {
+            background: rgba(0, 245, 255, 0.25);
+            transform: scale(1.05);
+        }
+
+        .refresh-button.fetching i {
+            animation: spin 0.8s linear infinite;
+        }
+
+        .filter-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .filter-panel-title {
+            color: var(--text-color);
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .reset-filters-button {
+            background: rgba(255, 107, 107, 0.2);
+            border: 1px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75em;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .reset-filters-button:hover {
+            background: rgba(255, 107, 107, 0.3);
+            transform: scale(1.05);
+        }
+
+        .reset-filters-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .storage-info {
+            background: rgba(0, 245, 255, 0.05);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-top: 12px;
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .storage-info i {
+            color: var(--accent-color);
+        }
+
+        .clear-storage-button {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid var(--accent-secondary);
+            color: var(--accent-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .clear-storage-button:hover {
+            background: rgba(255, 107, 107, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .filter-section {
+            margin-bottom: 12px;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section-title {
+            color: var(--accent-color);
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .filter-tag {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-tag:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--accent-color);
+        }
+
+        .filter-tag.filtered {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--accent-secondary);
+            opacity: 0.8;
+        }
+
+        .filter-tag.filtered span {
+            text-decoration: line-through;
+        }
+
+        .filter-tag.auto-filtered {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .filter-tag.auto-filtered:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--accent-secondary);
+            transform: none;
+        }
+
+        .filter-tag i {
+            font-size: 0.7em;
+        }
+
+        .filter-tag.line-tag {
+            border-left-width: 3px;
+        }
+
+        .line-mini-badge {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.75em;
+            line-height: 1.5;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 8px 6px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85em;
+            transition: var(--transition);
+        }
+
+        .data-table th {
+            color: var(--accent-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.75em;
+            background: rgba(0, 245, 255, 0.05);
+        }
+
+        .data-table tbody tr {
+            transition: var(--transition);
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--hover-bg);
+            transform: translateX(4px);
+        }
+
+        .data-table tbody tr:hover td {
+            color: var(--accent-color);
+        }
+
+        .line-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.9em;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .loading, .error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
+            font-size: 0.85em;
+        }
+
+        .loading {
+            color: var(--text-secondary);
+            font-style: italic;
+            position: relative;
+        }
+
+        .loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border-color);
+            border-top: 2px solid var(--accent-color);
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        .error {
+            color: var(--accent-secondary);
+            font-weight: 500;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Accessibilité */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        button:focus-visible,
+        .drag-handle:focus-visible,
+        .filter-tag:focus-visible,
+        .stop-item input:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        /* Retards, suppressions, états vides */
+        .data-table .delay {
+            color: #ffb454;
+            font-size: 0.8em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .data-table tr.cancelled .direction-cell {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .data-table .status-cancelled {
+            color: var(--accent-secondary);
+            font-weight: 700;
+        }
+
+        .error small {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        .filter-empty {
+            color: var(--text-secondary);
+            font-size: 0.8em;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .datetime-calendar-widget {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .datetime-calendar-widget .datetime-section {
+                justify-content: center;
+                text-align: center;
+                padding-bottom: 8px;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .datetime-calendar-widget .date-section,
+            .datetime-calendar-widget .time-section {
+                align-items: center;
+            }
+
+            .datetime-calendar-widget .calendar-section {
+                border-left: none;
+                padding-left: 0;
+            }
+
+            .transport-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stop-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .widget-header {
+                flex-wrap: wrap;
+            }
+
+            .widget-header .actions {
+                gap: 4px;
+            }
+
+            .filter-button, .remove-button {
+                font-size: 0.7em;
+                padding: 4px 8px;
+            }
+
+            .filter-button span, .remove-button span {
+                display: none;
+            }
+
+            .filter-button i, .remove-button i {
+                margin: 0;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-widgets">
+        <div class="base-widget datetime-calendar-widget">
+            <div class="datetime-section">
+                <div class="date-section">
+                    <div class="day" id="day">-</div>
+                    <div class="month" id="month">Chargement...</div>
+                </div>
+                <div class="time-section">
+                    <time class="digital-time" id="digital-time">--:--:--</time>
+                    <div class="time-label">Heure locale</div>
+                </div>
+            </div>
+            
+            <div class="calendar-section calendar-widget">
+                <div class="calendar-header" id="calendar-month-year">Chargement...</div>
+                <div class="calendar-weekdays">
+                    <div class="calendar-weekday">L</div>
+                    <div class="calendar-weekday">M</div>
+                    <div class="calendar-weekday">M</div>
+                    <div class="calendar-weekday">J</div>
+                    <div class="calendar-weekday">V</div>
+                    <div class="calendar-weekday">S</div>
+                    <div class="calendar-weekday">D</div>
+                </div>
+                <div class="calendar-days" id="calendar-days"></div>
+            </div>
+        </div>
+    </div>
+
+    <main class="main-container">
+        <section class="config-section">
+            <div class="config-header">
+                <h2 class="config-title"><i class="fas fa-cog"></i> Configuration des arrêts</h2>
+                <button class="config-button" id="toggleConfig" aria-expanded="false" aria-controls="stopSelector">
+                    <i class="fas fa-chevron-down" aria-hidden="true"></i> Configurer
+                </button>
+            </div>
+            <div id="stopSelector" class="hidden">
+                <div class="search-container">
+                    <label for="searchInput" class="sr-only">Rechercher un arrêt</label>
+                    <input type="search"
+                           class="search-input"
+                           id="searchInput"
+                           autocomplete="off"
+                           placeholder="Rechercher un arrêt...">
+                </div>
+                <div id="stopList" class="stop-selector"></div>
+                <div class="storage-info">
+                    <i class="fas fa-save"></i>
+                    <span>Vos préférences sont sauvegardées automatiquement dans votre navigateur</span>
+                </div>
+                <button class="clear-storage-button" id="clearStorage">
+                    <i class="fas fa-trash-alt"></i>
+                    <span>Effacer toutes les données sauvegardées</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="refresh-bar hidden" id="refreshBar">
+            <button class="refresh-button" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i>
+                <span id="refreshLabel">Chargement...</span>
+            </button>
+        </div>
+
+        <section id="transportGrid" class="transport-grid"></section>
+    </main>
+
+    <script src="stops.js"></script>
+    <script>
+        'use strict';
+
+        // STOP_LIST (données Naolib) est défini dans stops.js
+        // Format : [nom, StopPlaceId, [quayIds...]]
+
+        // Tables de lookup construites au démarrage
+        const STOP_MAP = {};       // { placeId: { name, quays } }
+        const QUAY_TO_PLACE = {};  // { quayId: placeId }
+        for (const [name, placeId, quays] of STOP_LIST) {
+            STOP_MAP[placeId] = { name, quays };
+            for (const q of quays) QUAY_TO_PLACE[q] = placeId;
+        }
+
+        const CONFIG = {
+            REFRESH_INTERVALS: {
+                CLOCK: 1000,
+                DISPLAY: 1000
+            },
+            FETCH_COOLDOWN_S: 30,      // limite de l'API : 1 requête / 30 s pour tous les arrêts
+            MAX_ROWS: 10,              // passages affichés par arrêt
+            MIN_DELAY_DISPLAYED: 2,    // retard (min) à partir duquel on l'affiche
+            SIRI_ENDPOINT: 'https://api.okina.fr/gateway/sem/realtime/anshar/services',
+            LOCALE: 'fr-FR',
+            TIMEZONE: 'Europe/Paris',
+            STORAGE_KEY: 'nantes-dashboard-config-v2'
+        };
+
+        const AppState = {
+            availableStops: [],
+            selectedStops: [],
+            isConfigOpen: false,
+            searchQuery: '',
+            filters: {}
+        };
+
+        const StorageManager = {
+            transport: null,
+
+            // Le TransportManager fournit le cache des passages à sauvegarder
+            attach(transportManager) {
+                this.transport = transportManager;
+            },
+
+            save() {
+                try {
+                    const cached = this.transport?.cachedByStop || {};
+                    const cachedData = {};
+                    for (const code of AppState.selectedStops) {
+                        if (cached[code]) cachedData[code] = cached[code];
+                    }
+                    const config = {
+                        selectedStops: AppState.selectedStops,
+                        filters: AppState.filters,
+                        cachedData,
+                        lastFetchTime: this.transport?.lastFetchTime || 0,
+                        timestamp: new Date().toISOString()
+                    };
+                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(config));
+                } catch (error) {
+                    console.error('Erreur sauvegarde:', error);
+                }
+            },
+
+            // Charge les arrêts et filtres dans AppState ; renvoie la config lue (ou null)
+            load() {
+                try {
+                    const saved = localStorage.getItem(CONFIG.STORAGE_KEY);
+                    if (saved) {
+                        const config = JSON.parse(saved);
+                        // Ne garder que des codes d'arrêts connus (données du navigateur non fiables)
+                        const stops = Array.isArray(config.selectedStops) ? config.selectedStops.map(String) : [];
+                        AppState.selectedStops = [...new Set(stops.filter(code => STOP_MAP[code]))];
+                        AppState.filters = {};
+                        for (const code of AppState.selectedStops) {
+                            const f = config.filters?.[code];
+                            AppState.filters[code] = {
+                                hiddenLines: Array.isArray(f?.hiddenLines) ? f.hiddenLines.map(String) : [],
+                                hiddenDestinations: Array.isArray(f?.hiddenDestinations) ? f.hiddenDestinations.map(String) : []
+                            };
+                        }
+                        return config;
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement:', error);
+                }
+                return null;
+            },
+
+            clear() {
+                try {
+                    localStorage.removeItem(CONFIG.STORAGE_KEY);
+                    AppState.selectedStops = [];
+                    AppState.filters = {};
+                    if (this.transport) this.transport.cachedByStop = {};
+                    return true;
+                } catch (error) {
+                    console.error('Erreur effacement:', error);
+                    return false;
+                }
+            }
+        };
+
+        const Utils = {
+            formatTime(date) {
+                return date.toLocaleTimeString(CONFIG.LOCALE, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    timeZone: CONFIG.TIMEZONE
+                });
+            },
+
+            formatDate(date) {
+                const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+                return {
+                    day: date.getDate(),
+                    month: months[date.getMonth()],
+                    monthYear: `${months[date.getMonth()]} ${date.getFullYear()}`
+                };
+            },
+
+            // Sûr dans du texte ET dans des attributs HTML entre guillemets
+            escapeHtml(text) {
+                return String(text).replace(/[&<>"']/g, c => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[c]));
+            },
+
+            // Le délai couvre la requête ET la lecture du corps de la réponse
+            async fetchText(url, options = {}, timeout = 15000) {
+                const controller = new AbortController();
+                const id = setTimeout(() => controller.abort(), timeout);
+                try {
+                    const response = await fetch(url, { ...options, signal: controller.signal });
+                    const text = await response.text();
+                    return { ok: response.ok, status: response.status, text };
+                } finally {
+                    clearTimeout(id);
+                }
+            },
+
+            compareNatural(a, b) {
+                return String(a).localeCompare(String(b), CONFIG.LOCALE, { numeric: true });
+            }
+        };
+
+        class TimeManager {
+            constructor() {
+                this.lastDateKey = null;
+                this.updateDateTime();
+                this.intervalId = setInterval(() => this.updateDateTime(), CONFIG.REFRESH_INTERVALS.CLOCK);
+            }
+
+            updateDateTime() {
+                const now = new Date();
+
+                const timeElement = document.getElementById('digital-time');
+                if (timeElement) timeElement.textContent = Utils.formatTime(now);
+
+                // Date et calendrier : reconstruits uniquement quand le jour change
+                const dateKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+                if (dateKey === this.lastDateKey) return;
+                this.lastDateKey = dateKey;
+
+                const formatted = Utils.formatDate(now);
+                const dayElement = document.getElementById('day');
+                const monthElement = document.getElementById('month');
+                if (dayElement) dayElement.textContent = formatted.day;
+                if (monthElement) monthElement.textContent = formatted.month.toUpperCase();
+
+                this.updateCalendar(now, formatted.monthYear);
+            }
+
+            updateCalendar(now, monthYear) {
+                const headerElement = document.getElementById('calendar-month-year');
+                if (headerElement) headerElement.textContent = monthYear.toUpperCase();
+
+                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
+                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+                const currentDay = now.getDate();
+
+                let calendarHTML = '';
+                const emptyDays = firstDay === 0 ? 6 : firstDay - 1;
+                for (let i = 0; i < emptyDays; i++) calendarHTML += '<div class="calendar-day"></div>';
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const isToday = day === currentDay;
+                    calendarHTML += `<div class="calendar-day ${isToday ? 'current-day' : ''}">${day}</div>`;
+                }
+
+                const daysElement = document.getElementById('calendar-days');
+                if (daysElement) daysElement.innerHTML = calendarHTML;
+            }
+
+            destroy() {
+                if (this.intervalId) clearInterval(this.intervalId);
+            }
+        }
+
+        class StopManager {
+            constructor(transportManager) {
+                this.transport = transportManager;
+                // Liste des arrêts issue des données embarquées (pas d'API)
+                AppState.availableStops = STOP_LIST.map(([name, placeId, quays]) => ({
+                    codeLieu: String(placeId),
+                    libelle: name,
+                    quays
+                }));
+                this.renderStopSelector();
+                this.setupEventListeners();
+            }
+
+            renderStopSelector() {
+                const container = document.getElementById('stopList');
+                if (!container) return;
+
+                const filteredStops = this.filterStops();
+
+                if (filteredStops.length === 0) {
+                    container.innerHTML = '<div class="error">Aucun arrêt trouvé</div>';
+                    return;
+                }
+
+                const html = filteredStops.map(stop => `
+                    <div class="stop-item">
+                        <input type="checkbox"
+                               id="stop-${stop.codeLieu}"
+                               value="${stop.codeLieu}"
+                               ${AppState.selectedStops.includes(stop.codeLieu) ? 'checked' : ''}>
+                        <label for="stop-${stop.codeLieu}">${Utils.escapeHtml(stop.libelle || stop.codeLieu)}</label>
+                    </div>
+                `).join('');
+
+                container.innerHTML = html;
+
+                container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    checkbox.addEventListener('change', (e) => this.handleStopSelection(e));
+                });
+            }
+
+            filterStops() {
+                // Copie : ne jamais trier AppState.availableStops en place
+                let stops = [...AppState.availableStops];
+                if (AppState.searchQuery) {
+                    const query = AppState.searchQuery.toLowerCase().trim();
+                    stops = stops.filter(stop => (stop.libelle || '').toLowerCase().includes(query));
+                }
+                return stops.sort((a, b) => {
+                    const aSelected = AppState.selectedStops.includes(a.codeLieu);
+                    const bSelected = AppState.selectedStops.includes(b.codeLieu);
+                    if (aSelected && !bSelected) return -1;
+                    if (!aSelected && bSelected) return 1;
+                    return (a.libelle || a.codeLieu).toLowerCase().localeCompare((b.libelle || b.codeLieu).toLowerCase());
+                });
+            }
+
+            handleStopSelection(event) {
+                const stopCode = event.target.value;
+                if (event.target.checked) {
+                    if (!AppState.selectedStops.includes(stopCode)) {
+                        AppState.selectedStops.push(stopCode);
+                    }
+                } else {
+                    AppState.selectedStops = AppState.selectedStops.filter(code => code !== stopCode);
+                    this.transport.forgetStop(stopCode);
+                }
+                StorageManager.save();
+                this.transport.updateTransportWidgets();
+            }
+
+            setupEventListeners() {
+                const toggleButton = document.getElementById('toggleConfig');
+                const selector = document.getElementById('stopSelector');
+                const searchInput = document.getElementById('searchInput');
+                const clearStorageButton = document.getElementById('clearStorage');
+
+                if (toggleButton && selector) {
+                    toggleButton.addEventListener('click', () => {
+                        AppState.isConfigOpen = !AppState.isConfigOpen;
+                        selector.classList.toggle('hidden');
+                        toggleButton.setAttribute('aria-expanded', String(AppState.isConfigOpen));
+                        const icon = toggleButton.querySelector('i');
+                        if (icon) icon.className = AppState.isConfigOpen ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+                        if (AppState.isConfigOpen && searchInput) setTimeout(() => searchInput.focus(), 100);
+                    });
+                }
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', (e) => {
+                        AppState.searchQuery = e.target.value;
+                        this.renderStopSelector();
+                    });
+                }
+
+                if (clearStorageButton) {
+                    clearStorageButton.addEventListener('click', () => {
+                        if (confirm('Êtes-vous sûr de vouloir effacer toutes vos données sauvegardées (arrêts et filtres) ?')) {
+                            StorageManager.clear();
+                            this.renderStopSelector();
+                            this.transport.updateTransportWidgets();
+                        }
+                    });
+                }
+            }
+        }
+
+        class TransportManager {
+            constructor(saved = {}) {
+                this.cachedByStop = {};
+                // Ne restaurer que le cache des arrêts encore sélectionnés
+                for (const code of AppState.selectedStops) {
+                    if (Array.isArray(saved.cachedData?.[code])) this.cachedByStop[code] = saved.cachedData[code];
+                }
+                this.lastFetchTime = saved.lastFetchTime || 0;
+                this.lastFailed = false;
+                this.fetchInProgress = false;
+                this.countdownInterval = null;
+                this.displayInterval = null;
+                this.onSelectionChange = null;   // appelé quand la sélection change depuis un widget
+                const refreshBtn = document.getElementById('refreshBtn');
+                if (refreshBtn) refreshBtn.addEventListener('click', () => this.forceRefresh());
+            }
+
+            start() {
+                this.updateTransportWidgets();
+                // Rafraîchit l'affichage (minutes restantes, passages écoulés) sans nouvelle requête
+                this.displayInterval = setInterval(() => this.refreshDisplays(), CONFIG.REFRESH_INTERVALS.DISPLAY);
+            }
+
+            updateTransportWidgets() {
+                const container = document.getElementById('transportGrid');
+                if (!container) return;
+
+                const refreshBar = document.getElementById('refreshBar');
+
+                if (AppState.selectedStops.length === 0) {
+                    this.stopCountdown();
+                    container.innerHTML = '<div class="error" style="grid-column: 1/-1;">Aucun arrêt sélectionné. Configurez vos arrêts ci-dessus.</div>';
+                    if (refreshBar) refreshBar.classList.add('hidden');
+                    return;
+                }
+                if (refreshBar) refreshBar.classList.remove('hidden');
+
+                container.innerHTML = AppState.selectedStops.map(stopCode => {
+                    const stop = AppState.availableStops.find(s => s.codeLieu === stopCode) || { libelle: stopCode };
+                    const name = Utils.escapeHtml(stop.libelle);
+                    return `
+                        <article class="widget" draggable="true" data-stop-code="${stopCode}">
+                            <h2 class="widget-header">
+                                <div class="drag-handle" role="button" tabindex="0"
+                                     title="Maintenir pour déplacer (ou flèches du clavier)"
+                                     aria-label="Déplacer l'arrêt ${name} (flèches du clavier)">
+                                    <i class="fas fa-grip-vertical" aria-hidden="true"></i>
+                                </div>
+                                <div class="title">
+                                    <i class="fas fa-bus" aria-hidden="true"></i> ${name}
+                                </div>
+                                <div class="actions">
+                                    <button class="filter-button" data-stop="${stopCode}"
+                                            aria-expanded="false" aria-controls="filter-${stopCode}"
+                                            aria-label="Filtrer les lignes de l'arrêt ${name}">
+                                        <i class="fas fa-filter" aria-hidden="true"></i>
+                                        <span>Filtrer</span>
+                                    </button>
+                                </div>
+                            </h2>
+                            <div class="filter-panel" id="filter-${stopCode}">
+                                <div class="filter-panel-header">
+                                    <div class="filter-panel-title">
+                                        <i class="fas fa-sliders-h" aria-hidden="true"></i> Filtres actifs
+                                    </div>
+                                    <button class="reset-filters-button" data-stop="${stopCode}"
+                                            aria-label="Réinitialiser les filtres de l'arrêt ${name}">
+                                        <i class="fas fa-redo" aria-hidden="true"></i>
+                                        <span>Réinitialiser</span>
+                                    </button>
+                                </div>
+                                <div class="filter-section">
+                                    <div class="filter-section-title">Lignes disponibles</div>
+                                    <div class="filter-tags" id="lines-${stopCode}">
+                                        <div class="loading" style="font-size: 0.8em;">Chargement...</div>
+                                    </div>
+                                </div>
+                                <div class="filter-section">
+                                    <div class="filter-section-title">Destinations disponibles</div>
+                                    <div class="filter-tags" id="destinations-${stopCode}">
+                                        <div class="loading" style="font-size: 0.8em;">Chargement...</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="content-${stopCode}">
+                                <div class="loading">Chargement...</div>
+                            </div>
+                            <div class="widget-footer">
+                                <button class="remove-button" data-stop="${stopCode}"
+                                        aria-label="Supprimer l'arrêt ${name}">
+                                    <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                                    <span>Supprimer</span>
+                                </button>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+
+                container.querySelectorAll('.widget').forEach(widget => this.setupDragAndDrop(widget));
+
+                container.querySelectorAll('.filter-button').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        this.toggleFilterPanel(e.currentTarget.dataset.stop, e.currentTarget);
+                    });
+                });
+
+                container.querySelectorAll('.remove-button').forEach(button => {
+                    button.addEventListener('click', (e) => this.removeStop(e.currentTarget.dataset.stop));
+                });
+
+                container.querySelectorAll('.reset-filters-button').forEach(button => {
+                    button.addEventListener('click', (e) => this.resetFilters(e.currentTarget.dataset.stop));
+                });
+
+                // Délégation : les étiquettes de filtre sont régénérées à chaque mise à jour
+                container.querySelectorAll('.filter-tags').forEach(group => {
+                    group.addEventListener('click', (e) => this.handleTagEvent(e));
+                    group.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') this.handleTagEvent(e);
+                    });
+                });
+
+                AppState.selectedStops.forEach(stopCode => {
+                    if (!AppState.filters[stopCode]) {
+                        AppState.filters[stopCode] = { hiddenLines: [], hiddenDestinations: [] };
+                    }
+                });
+
+                // Restaurer le cache immédiatement pour les arrêts existants
+                for (const stopCode of AppState.selectedStops) {
+                    if (this.cachedByStop[stopCode]) this.updateFilterOptions(stopCode, this.cachedByStop[stopCode]);
+                }
+                this.refreshDisplays();
+
+                // Le décompte pilote le cycle de requêtes (pas de timer séparé)
+                this.startCountdown();
+            }
+
+            toggleFilterPanel(stopCode, button) {
+                const panel = document.getElementById(`filter-${stopCode}`);
+                if (!panel) return;
+                const isActive = panel.classList.contains('active');
+                document.querySelectorAll('.filter-panel').forEach(p => p.classList.remove('active'));
+                document.querySelectorAll('.filter-button').forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-expanded', 'false');
+                });
+                if (!isActive) {
+                    panel.classList.add('active');
+                    button.classList.add('active');
+                    button.setAttribute('aria-expanded', 'true');
+                }
+            }
+
+            // ---------- Cycle de requêtes ----------
+
+            secondsUntilNextFetch() {
+                const elapsed = Math.floor((Date.now() - this.lastFetchTime) / 1000);
+                return Math.max(0, CONFIG.FETCH_COOLDOWN_S - elapsed);
+            }
+
+            async loadAllStopsData() {
+                if (AppState.selectedStops.length === 0) return;
+                if (this.fetchInProgress) return;
+
+                // Respecter le rate limit : 1 requête / 30 s
+                if (Date.now() - this.lastFetchTime < (CONFIG.FETCH_COOLDOWN_S - 1) * 1000) return;
+
+                // Collecter tous les QuayIds des arrêts sélectionnés
+                const quayIds = [];
+                for (const stopCode of AppState.selectedStops) {
+                    const info = STOP_MAP[parseInt(stopCode, 10)];
+                    if (info) quayIds.push(...info.quays);
+                }
+                if (quayIds.length === 0) return;
+
+                this.fetchInProgress = true;
+                const btn = document.getElementById('refreshBtn');
+                const label = document.getElementById('refreshLabel');
+                if (btn) { btn.classList.remove('ready'); btn.classList.add('fetching'); }
+                if (label) label.textContent = 'Chargement...';
+                this.refreshDisplays();
+
+                try {
+                    const { ok, status, text } = await Utils.fetchText(CONFIG.SIRI_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: this.buildSiriRequest(quayIds)
+                    }, 20000);
+
+                    this.lastFetchTime = Date.now();
+
+                    if (status === 429) {
+                        // Trop de requêtes : on garde le cache et on réessaie au prochain cycle
+                        console.warn('SIRI: rate limit, prochain cycle dans 30 s');
+                    } else {
+                        if (!ok) throw new Error(`HTTP ${status}`);
+
+                        // Regrouper par arrêt (StopPlace ID), trié par heure de départ
+                        const byStop = {};
+                        for (const dep of this.parseSiriResponse(text)) {
+                            if (dep.stopPlaceId) (byStop[dep.stopPlaceId] ||= []).push(dep);
+                        }
+                        for (const deps of Object.values(byStop)) {
+                            deps.sort((a, b) => new Date(a.expectedTime) - new Date(b.expectedTime));
+                        }
+
+                        for (const stopCode of AppState.selectedStops) {
+                            const data = byStop[stopCode] || [];
+                            this.cachedByStop[stopCode] = data;
+                            this.updateFilterOptions(stopCode, data);
+                        }
+                        this.lastFailed = false;
+                        StorageManager.save();
+                    }
+                } catch (error) {
+                    // Nouvel essai automatique au prochain cycle (le bouton permet de forcer)
+                    this.lastFetchTime = Date.now();
+                    this.lastFailed = true;
+                    console.error('Erreur SIRI:', error);
+                } finally {
+                    this.fetchInProgress = false;
+                    if (btn) btn.classList.remove('fetching');
+                }
+
+                this.refreshDisplays();
+                this.startCountdown();
+            }
+
+            buildSiriRequest(quayIds) {
+                const ts = new Date().toISOString();
+                const requests = quayIds.map((qid, i) =>
+                    `<StopMonitoringRequest version="2.0"><RequestTimestamp>${ts}</RequestTimestamp><MessageIdentifier>Msg-${i}</MessageIdentifier><MonitoringRef>FR_NAOLIB:Quay:${qid}</MonitoringRef></StopMonitoringRequest>`
+                ).join('');
+                return `<?xml version="1.0" encoding="utf-8"?><Siri xmlns="http://www.siri.org.uk/siri" version="2.0"><ServiceRequest><RequestTimestamp>${ts}</RequestTimestamp><RequestorRef>opendata</RequestorRef>${requests}</ServiceRequest></Siri>`;
+            }
+
+            parseSiriResponse(xmlText) {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(xmlText, 'application/xml');
+                if (doc.getElementsByTagName('parsererror').length > 0) {
+                    throw new Error('Réponse SIRI illisible');
+                }
+                const ns = 'http://www.siri.org.uk/siri';
+                const departures = [];
+
+                const visits = doc.getElementsByTagNameNS(ns, 'MonitoredStopVisit');
+                for (const visit of visits) {
+                    const get = (tag) => visit.getElementsByTagNameNS(ns, tag)[0]?.textContent?.trim() || '';
+
+                    const monRef = get('MonitoringRef');
+                    const quayId = parseInt(monRef.split(':').pop(), 10);
+                    const placeId = QUAY_TO_PLACE[quayId];
+
+                    const lineRef = get('LineRef');
+                    const lineNum = lineRef.replace(/^.*:Line:/, '').replace(/:LOC$/, '');
+
+                    const destination = get('DestinationDisplay') || get('DestinationName');
+                    const vehicleMode = get('VehicleMode');
+                    const expectedDep = get('ExpectedDepartureTime') || get('AimedDepartureTime');
+                    const aimedDep = get('AimedDepartureTime');
+                    const status = get('DepartureStatus') || get('ArrivalStatus');
+
+                    if (lineNum && destination && expectedDep) {
+                        departures.push({
+                            quayId,
+                            stopPlaceId: placeId !== undefined ? String(placeId) : null,
+                            line: lineNum,
+                            destination,
+                            vehicleMode,
+                            expectedTime: expectedDep,
+                            aimedTime: aimedDep,
+                            status,
+                            cancelled: /cancel/i.test(status)
+                        });
+                    }
+                }
+                return departures;
+            }
+
+            // ---------- Compte à rebours et rafraîchissement ----------
+
+            stopCountdown() {
+                if (this.countdownInterval) {
+                    clearInterval(this.countdownInterval);
+                    this.countdownInterval = null;
+                }
+            }
+
+            startCountdown() {
+                if (this.fetchInProgress) return;
+                const btn = document.getElementById('refreshBtn');
+                const label = document.getElementById('refreshLabel');
+                if (!btn || !label) return;
+                this.stopCountdown();
+                // Après une erreur, le bouton reste actif pour forcer un nouvel essai
+                btn.classList.toggle('ready', this.lastFailed);
+
+                // Le temps restant est relu à chaque tick (robuste si l'onglet est ralenti)
+                const tick = () => {
+                    const remaining = this.secondsUntilNextFetch();
+                    if (remaining <= 0) {
+                        this.stopCountdown();
+                        this.loadAllStopsData();
+                        return;
+                    }
+                    label.textContent = this.lastFailed ? `Réessai dans ${remaining}s` : `${remaining}s`;
+                };
+                tick();
+                if (!this.fetchInProgress && this.secondsUntilNextFetch() > 0) {
+                    this.countdownInterval = setInterval(tick, 1000);
+                }
+            }
+
+            forceRefresh() {
+                if (this.fetchInProgress || !this.lastFailed) return;
+                this.lastFetchTime = 0;
+                this.loadAllStopsData();
+            }
+
+            // Redessine tous les arrêts depuis le cache (appelé chaque seconde)
+            refreshDisplays() {
+                for (const stopCode of AppState.selectedStops) {
+                    const data = this.cachedByStop[stopCode];
+                    if (data) this.displayStopData(stopCode, data);
+                    else this.displayPlaceholder(stopCode);
+                }
+            }
+
+            // N'écrit dans le DOM que si le contenu a changé
+            setContent(container, html) {
+                if (container._html === html) return;
+                container._html = html;
+                container.innerHTML = html;
+            }
+
+            // Arrêt sans données en cache : on explique l'attente
+            displayPlaceholder(stopCode) {
+                const container = document.getElementById(`content-${stopCode}`);
+                if (!container) return;
+                const wait = this.secondsUntilNextFetch();
+                let html;
+                if (this.fetchInProgress || (!this.lastFailed && wait === 0)) {
+                    html = '<div class="loading">Chargement...</div>';
+                } else if (this.lastFailed) {
+                    html = `<div class="error">Données indisponibles<small>Nouvel essai dans ${wait}s</small></div>`;
+                } else {
+                    html = `<div class="loading">Prochaine actualisation dans ${wait}s</div>`;
+                }
+                this.setContent(container, html);
+            }
+
+            // ---------- Filtres ----------
+
+            // Calcule lignes, destinations et destinations masquées automatiquement
+            // (une destination d'une ligne masquée est masquée avec elle)
+            getFilterContext(stopCode, data) {
+                const filters = AppState.filters[stopCode] || { hiddenLines: [], hiddenDestinations: [] };
+                const lines = new Set();
+                const destinations = new Set();
+                const lineToDestinations = {};
+                const destToLines = {};
+
+                for (const bus of data) {
+                    if (!bus) continue;
+                    const ligne = this.getLigne(bus);
+                    const terminus = this.getTerminus(bus);
+                    const hasLine = ligne && ligne !== 'N/A';
+                    const hasDest = terminus && terminus !== 'Direction inconnue';
+                    if (hasLine) {
+                        lines.add(ligne);
+                        if (!lineToDestinations[ligne]) lineToDestinations[ligne] = new Set();
+                        if (hasDest) {
+                            lineToDestinations[ligne].add(terminus);
+                            if (!destToLines[terminus]) destToLines[terminus] = new Set();
+                            destToLines[terminus].add(ligne);
+                        }
+                    }
+                    if (hasDest) destinations.add(terminus);
+                }
+
+                // Les éléments masqués restent listés même sans passage actuel,
+                // pour pouvoir les réafficher
+                filters.hiddenLines.forEach(l => lines.add(l));
+                filters.hiddenDestinations.forEach(d => destinations.add(d));
+
+                const autoHiddenDestinations = new Set();
+                for (const hiddenLine of filters.hiddenLines) {
+                    lineToDestinations[hiddenLine]?.forEach(dest => autoHiddenDestinations.add(dest));
+                }
+
+                return { filters, lines, destinations, destToLines, autoHiddenDestinations };
+            }
+
+            updateFilterOptions(stopCode, data) {
+                if (!Array.isArray(data)) return;
+                const { filters, lines, destinations, destToLines, autoHiddenDestinations } =
+                    this.getFilterContext(stopCode, data);
+
+                const linesContainer = document.getElementById(`lines-${stopCode}`);
+                if (linesContainer) {
+                    linesContainer.innerHTML = lines.size === 0
+                        ? '<div class="filter-empty">Aucune ligne pour le moment</div>'
+                        : Array.from(lines).sort(Utils.compareNatural).map(line => {
+                            const isFiltered = filters.hiddenLines.includes(line);
+                            const hue = this.getLineHue(line);
+                            const safe = Utils.escapeHtml(line);
+                            return `<div class="filter-tag line-tag ${isFiltered ? 'filtered' : ''}" style="border-left-color: hsl(${hue}, 85%, 55%);" role="button" tabindex="0" aria-label="${isFiltered ? 'Afficher' : 'Masquer'} la ligne ${safe}" data-type="line" data-stop="${stopCode}" data-value="${safe}">${isFiltered ? '<i class="fas fa-eye-slash" aria-hidden="true"></i>' : '<i class="fas fa-eye" aria-hidden="true"></i>'}<span style="${isFiltered ? '' : `color: hsl(${hue}, 85%, 65%); font-weight: 700;`}">${safe}</span></div>`;
+                        }).join('');
+                }
+
+                const destContainer = document.getElementById(`destinations-${stopCode}`);
+                if (destContainer) {
+                    destContainer.innerHTML = destinations.size === 0
+                        ? '<div class="filter-empty">Aucune destination pour le moment</div>'
+                        : Array.from(destinations).sort((a, b) => a.localeCompare(b, CONFIG.LOCALE)).map(dest => {
+                            const isManuallyFiltered = filters.hiddenDestinations.includes(dest);
+                            const isAutoFiltered = autoHiddenDestinations.has(dest) && !isManuallyFiltered;
+                            const isFiltered = isManuallyFiltered || isAutoFiltered;
+                            const safe = Utils.escapeHtml(dest);
+                            const lineBadges = Array.from(destToLines[dest] || []).sort(Utils.compareNatural).map(line => {
+                                const hue = this.getLineHue(line);
+                                return `<span class="line-mini-badge" style="background: hsla(${hue}, 85%, 55%, 0.2); color: hsl(${hue}, 85%, 65%);">${Utils.escapeHtml(line)}</span>`;
+                            }).join('');
+                            const a11y = isAutoFiltered
+                                ? 'aria-disabled="true" title="Masqué automatiquement (ligne filtrée)"'
+                                : `role="button" tabindex="0" aria-label="${isFiltered ? 'Afficher' : 'Masquer'} la destination ${safe}"`;
+                            return `<div class="filter-tag ${isFiltered ? 'filtered' : ''} ${isAutoFiltered ? 'auto-filtered' : ''}" ${a11y} data-type="destination" data-stop="${stopCode}" data-value="${safe}">${isFiltered ? '<i class="fas fa-eye-slash" aria-hidden="true"></i>' : '<i class="fas fa-eye" aria-hidden="true"></i>'}${lineBadges}<span>${safe}</span>${isAutoFiltered ? '<i class="fas fa-link" aria-hidden="true" style="font-size: 0.6em; opacity: 0.7;"></i>' : ''}</div>`;
+                        }).join('');
+                }
+            }
+
+            handleTagEvent(event) {
+                const tag = event.target.closest('.filter-tag');
+                if (!tag || tag.classList.contains('auto-filtered')) return;
+                event.preventDefault();
+                this.toggleFilter(tag);
+            }
+
+            toggleFilter(tagElement) {
+                const { type, stop: stopCode, value } = tagElement.dataset;
+
+                if (!AppState.filters[stopCode]) {
+                    AppState.filters[stopCode] = { hiddenLines: [], hiddenDestinations: [] };
+                }
+
+                const filterArray = type === 'line' ? AppState.filters[stopCode].hiddenLines : AppState.filters[stopCode].hiddenDestinations;
+                const index = filterArray.indexOf(value);
+                if (index > -1) filterArray.splice(index, 1);
+                else filterArray.push(value);
+
+                const hadFocus = document.activeElement === tagElement;
+                StorageManager.save();
+                this.rerenderStop(stopCode);
+
+                // Les étiquettes sont régénérées : rendre le focus clavier à la même
+                if (hadFocus) {
+                    const group = document.getElementById(`${type === 'line' ? 'lines' : 'destinations'}-${stopCode}`);
+                    Array.from(group?.querySelectorAll('.filter-tag') || [])
+                        .find(t => t.dataset.value === value)?.focus();
+                }
+            }
+
+            rerenderStop(stopCode) {
+                const data = this.cachedByStop[stopCode];
+                if (!data) return;
+                this.updateFilterOptions(stopCode, data);
+                this.displayStopData(stopCode, data);
+            }
+
+            resetFilters(stopCode) {
+                if (AppState.filters[stopCode]) {
+                    AppState.filters[stopCode] = { hiddenLines: [], hiddenDestinations: [] };
+                }
+                StorageManager.save();
+                this.rerenderStop(stopCode);
+            }
+
+            // ---------- Sélection et ordre des arrêts ----------
+
+            // Oublie les données d'un arrêt retiré (filtres + cache)
+            forgetStop(stopCode) {
+                delete AppState.filters[stopCode];
+                delete this.cachedByStop[stopCode];
+            }
+
+            removeStop(stopCode) {
+                AppState.selectedStops = AppState.selectedStops.filter(code => code !== stopCode);
+                this.forgetStop(stopCode);
+                StorageManager.save();
+                this.updateTransportWidgets();
+                if (this.onSelectionChange) this.onSelectionChange();
+            }
+
+            setupDragAndDrop(widget) {
+                const dragHandle = widget.querySelector('.drag-handle');
+                let isDragging = false;
+
+                // Clavier : flèches sur la poignée pour déplacer l'arrêt
+                dragHandle.addEventListener('keydown', (e) => {
+                    const step = { ArrowUp: -1, ArrowLeft: -1, ArrowDown: 1, ArrowRight: 1 }[e.key];
+                    if (!step) return;
+                    e.preventDefault();
+                    this.moveStop(widget.dataset.stopCode, step);
+                });
+
+                dragHandle.addEventListener('touchstart', () => {
+                    isDragging = true;
+                    widget.style.opacity = '0.5';
+                }, { passive: true });
+
+                dragHandle.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    const touch = e.touches[0];
+                    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const widgetBelow = elementBelow?.closest('.widget');
+                    if (widgetBelow && widgetBelow !== widget) {
+                        widgetBelow.classList.add('drag-over');
+                        document.querySelectorAll('.widget').forEach(w => {
+                            if (w !== widgetBelow) w.classList.remove('drag-over');
+                        });
+                    }
+                }, { passive: true });
+
+                dragHandle.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    widget.style.opacity = '';
+                    const touch = e.changedTouches[0];
+                    const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+                    const widgetBelow = elementBelow?.closest('.widget');
+                    document.querySelectorAll('.widget').forEach(w => w.classList.remove('drag-over'));
+                    if (widgetBelow && widgetBelow !== widget) {
+                        this.reorderStops(widget.dataset.stopCode, widgetBelow.dataset.stopCode);
+                    }
+                    isDragging = false;
+                }, { passive: true });
+
+                dragHandle.addEventListener('mousedown', () => { isDragging = true; });
+
+                widget.addEventListener('mousedown', (e) => {
+                    if (!e.target.closest('.drag-handle')) {
+                        isDragging = false;
+                        widget.setAttribute('draggable', 'false');
+                    } else {
+                        widget.setAttribute('draggable', 'true');
+                    }
+                });
+
+                widget.addEventListener('dragstart', (e) => {
+                    if (!isDragging) { e.preventDefault(); return; }
+                    widget.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/plain', widget.dataset.stopCode);
+                });
+
+                widget.addEventListener('dragend', () => {
+                    widget.classList.remove('dragging');
+                    isDragging = false;
+                    widget.setAttribute('draggable', 'true');
+                });
+
+                widget.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    const draggingWidget = document.querySelector('.dragging');
+                    if (draggingWidget && draggingWidget !== widget) widget.classList.add('drag-over');
+                });
+
+                widget.addEventListener('dragleave', () => widget.classList.remove('drag-over'));
+
+                widget.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    widget.classList.remove('drag-over');
+                    const draggedStopCode = e.dataTransfer.getData('text/plain');
+                    const targetStopCode = widget.dataset.stopCode;
+                    if (draggedStopCode !== targetStopCode) this.reorderStops(draggedStopCode, targetStopCode);
+                });
+            }
+
+            reorderStops(draggedCode, targetCode) {
+                const draggedIndex = AppState.selectedStops.indexOf(draggedCode);
+                const targetIndex = AppState.selectedStops.indexOf(targetCode);
+                if (draggedIndex === -1 || targetIndex === -1) return;
+                AppState.selectedStops.splice(draggedIndex, 1);
+                const newTargetIndex = AppState.selectedStops.indexOf(targetCode);
+                AppState.selectedStops.splice(newTargetIndex, 0, draggedCode);
+                StorageManager.save();
+                this.updateTransportWidgets();
+            }
+
+            // Déplacement d'un cran (clavier) ; rend le focus à la poignée après le rendu
+            moveStop(stopCode, step) {
+                const index = AppState.selectedStops.indexOf(stopCode);
+                const newIndex = index + step;
+                if (index === -1 || newIndex < 0 || newIndex >= AppState.selectedStops.length) return;
+                const stops = AppState.selectedStops;
+                [stops[index], stops[newIndex]] = [stops[newIndex], stops[index]];
+                StorageManager.save();
+                this.updateTransportWidgets();
+                document.querySelector(`.widget[data-stop-code="${stopCode}"] .drag-handle`)?.focus();
+            }
+
+            // ---------- Affichage des passages ----------
+
+            displayStopData(stopCode, data) {
+                const container = document.getElementById(`content-${stopCode}`);
+                if (!container) return;
+
+                // Passages déjà partis : écartés (ils ne doivent pas occuper les lignes affichées)
+                const upcoming = Array.isArray(data)
+                    ? data.filter(bus => bus && (bus.line || bus.destination) && this.isUpcoming(bus))
+                    : [];
+                if (upcoming.length === 0) {
+                    this.setContent(container, '<div class="error">Aucun passage prévu</div>');
+                    return;
+                }
+
+                const { filters, autoHiddenDestinations } = this.getFilterContext(stopCode, data);
+
+                const filteredData = upcoming.filter(bus => {
+                    const ligne = this.getLigne(bus);
+                    const terminus = this.getTerminus(bus);
+                    if (filters.hiddenLines.includes(ligne)) return false;
+                    if (filters.hiddenDestinations.includes(terminus)) return false;
+                    if (autoHiddenDestinations.has(terminus)) return false;
+                    return true;
+                }).slice(0, CONFIG.MAX_ROWS);
+
+                if (filteredData.length === 0) {
+                    this.setContent(container, '<div class="error">Aucun passage après filtrage</div>');
+                    return;
+                }
+
+                const rows = filteredData.map(bus => {
+                    const ligne = this.getLigne(bus);
+                    const hue = this.getLineHue(ligne);
+                    const delay = this.getDelayMin(bus);
+                    const timeHtml = bus.cancelled
+                        ? '<span class="status-cancelled">Supprimé</span>'
+                        : `${Utils.escapeHtml(this.getTemps(bus))}${delay >= CONFIG.MIN_DELAY_DISPLAYED ? ` <span class="delay" title="Retard par rapport à l'horaire théorique">+${delay} min</span>` : ''}`;
+                    return `
+                        <tr class="${bus.cancelled ? 'cancelled' : ''}">
+                            <td><span class="line-badge" style="background: hsla(${hue}, 85%, 55%, 0.18); color: hsl(${hue}, 85%, 65%); border: 1px solid hsla(${hue}, 85%, 55%, 0.4);">${Utils.escapeHtml(ligne)}</span></td>
+                            <td class="direction-cell">${Utils.escapeHtml(this.getTerminus(bus))}</td>
+                            <td>${timeHtml}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                this.setContent(container, `
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Ligne</th>
+                                <th>Direction</th>
+                                <th>Temps</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                `);
+            }
+
+            getLineHue(ligne) {
+                let hash = 0;
+                for (let i = 0; i < ligne.length; i++) {
+                    hash = ligne.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                return Math.abs(hash) % 360;
+            }
+
+            getLigne(bus) {
+                return bus.line || 'N/A';
+            }
+
+            getTerminus(bus) {
+                return bus.destination || 'Direction inconnue';
+            }
+
+            // Minutes avant le passage (arrondi), ou null si l'heure est inconnue
+            minutesUntil(bus) {
+                if (!bus.expectedTime) return null;
+                const time = new Date(bus.expectedTime).getTime();
+                return Number.isNaN(time) ? null : Math.round((time - Date.now()) / 60000);
+            }
+
+            isUpcoming(bus) {
+                const minutes = this.minutesUntil(bus);
+                return minutes === null || minutes >= 0;
+            }
+
+            // Retard en minutes (heure prévue - heure théorique), 0 si inconnu
+            getDelayMin(bus) {
+                if (!bus.aimedTime || !bus.expectedTime) return 0;
+                const delay = Math.round((new Date(bus.expectedTime) - new Date(bus.aimedTime)) / 60000);
+                return Number.isNaN(delay) ? 0 : delay;
+            }
+
+            getTemps(bus) {
+                const minutes = this.minutesUntil(bus);
+                if (minutes === null) return 'N/A';
+                if (minutes <= 0) return 'Proche';
+                if (minutes < 60) return `${minutes} min`;
+                return new Date(bus.expectedTime).toLocaleTimeString(CONFIG.LOCALE, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    timeZone: CONFIG.TIMEZONE
+                });
+            }
+
+            destroy() {
+                this.stopCountdown();
+                if (this.displayInterval) {
+                    clearInterval(this.displayInterval);
+                    this.displayInterval = null;
+                }
+            }
+        }
+
+        class DashboardApp {
+            constructor() {
+                this.timeManager = null;
+                this.stopManager = null;
+                this.transportManager = null;
+            }
+
+            init() {
+                try {
+                    const saved = StorageManager.load();
+                    this.timeManager = new TimeManager();
+                    this.transportManager = new TransportManager(saved || {});
+                    StorageManager.attach(this.transportManager);
+                    this.stopManager = new StopManager(this.transportManager);
+                    this.transportManager.onSelectionChange = () => this.stopManager.renderStopSelector();
+                    // Exposés pour le débogage depuis la console
+                    window.transportManager = this.transportManager;
+                    window.stopManager = this.stopManager;
+                    this.transportManager.start();
+                } catch (error) {
+                    console.error('Erreur initialisation dashboard:', error);
+                }
+            }
+
+            destroy() {
+                this.timeManager?.destroy();
+                this.transportManager?.destroy();
+            }
+        }
+
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new DashboardApp();
+            app.init();
+        });
+
+        window.addEventListener('beforeunload', () => {
+            app?.destroy();
+        });
+    </script>
+</body>
+</html>
