@@ -15,7 +15,7 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 
 ## Utilisation
 
-Télécharger le dépôt et ouvrir `1Dashboard_NANTES_Dyn.html` dans un navigateur (`stops.js` et `icons/` doivent rester dans le même dossier). Cliquer sur « Configurer » pour ajouter des arrêts. Les données temps réel demandent un accès internet.
+Télécharger le dépôt et ouvrir `MES_ARRETS_NANTES.html` dans un navigateur (`stops.js` et `icons/` doivent rester dans le même dossier). Cliquer sur « Configurer » pour ajouter des arrêts. Les données temps réel demandent un accès internet.
 
 ## Données et crédits
 
@@ -41,7 +41,7 @@ L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audienc
 
 ### Fichiers
 
-- `1Dashboard_NANTES_Dyn.html` — l'application : CSS dans `<style>`, balisage, puis un `<script>` inline avec toute la logique.
+- `MES_ARRETS_NANTES.html` — l'application : CSS dans `<style>`, balisage, puis un `<script>` inline avec toute la logique.
 - `stops.js` — données embarquées des arrêts (`STOP_LIST`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Les deux fichiers doivent rester dans le même dossier.
 - `icons/` — `favicon.svg` est la source de l'icône de l'onglet (un bus vu de face avec des ondes « temps réel », aux couleurs de l'appli) ; `apple-touch-icon.png` (180 px, sans coins arrondis) est le seul fichier référencé par la page. L'icône d'onglet elle-même est **embarquée dans le `<head>`** en data URI (SVG + PNG 32 px de repli), donc la page l'affiche même copiée seule. Pour la modifier : éditer `icons/favicon.svg`, puis réencoder les deux data URI du `<head>` (SVG minifié et percent-encodé, PNG 32 px en base64) et régénérer `apple-touch-icon.png`.
 
