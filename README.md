@@ -4,6 +4,10 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 
 > Projet indépendant, **non affilié** à Naolib, à la TAN ni à Nantes Métropole. Les noms de réseau et d'arrêts appartiennent à leurs propriétaires respectifs.
 
+![Aperçu du tableau de bord : horloge et calendrier, puis trois arrêts avec leurs prochains passages, un retard et un passage supprimé](docs/apercu.png)
+
+*Aperçu de l'application. Les horaires affichés sont des données d'exemple.*
+
 ## Fonctionnalités
 
 - Choix libre des arrêts, avec recherche, et réorganisation des cartes par glisser-déposer (souris, tactile ou flèches du clavier).
@@ -45,6 +49,7 @@ L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audienc
 - `MES_ARRETS_NANTES.html` — l'application : CSS dans `<style>`, balisage, puis un `<script>` inline avec toute la logique.
 - `stops.js` — données embarquées des arrêts (`STOP_LIST`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Il doit rester dans le même dossier que le HTML.
 - `vendor/` — police Inter (variable, sous-ensemble latin) et Font Awesome Free 6 (style solid uniquement), copiés depuis leurs paquets npm officiels avec leurs licences ; versions et procédure de mise à jour dans `vendor/README.md`.
+- `docs/apercu.png` — capture d'écran du README (données d'exemple, non issues de l'API) ; à régénérer si l'interface change nettement.
 - `icons/` — `favicon.svg` est la source de l'icône de l'onglet (un bus vu de face avec des ondes « temps réel », aux couleurs de l'appli) ; `apple-touch-icon.png` (180 px, sans coins arrondis) est le seul fichier référencé par la page. L'icône d'onglet elle-même est **embarquée dans le `<head>`** en data URI (SVG + PNG 32 px de repli), donc la page l'affiche même copiée seule. Pour la modifier : éditer `icons/favicon.svg`, puis réencoder les deux data URI du `<head>` (SVG minifié et percent-encodé, PNG 32 px en base64) et régénérer `apple-touch-icon.png`.
 
 Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Les textes de l'interface, les commentaires et les messages de commit sont en français ; garder cette convention. Les données live demandent l'accès réseau à `api.okina.fr` et une réponse CORS autorisée par le navigateur ; aucune ressource n'est chargée depuis un CDN. Pour vérifier un changement, charger la page (Playwright/Chromium convient pour des vérifications scriptées, en simulant l'API avec `page.route`).
