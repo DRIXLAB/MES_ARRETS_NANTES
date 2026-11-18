@@ -62,15 +62,6 @@
             line-height: 1.6;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.02)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            pointer-events: none;
-            z-index: -1;
-        }
-
         .header-widgets {
             display: flex;
             justify-content: center;
@@ -85,8 +76,6 @@
 
         .base-widget {
             background: var(--widget-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             box-shadow: var(--glass-shadow);
@@ -236,7 +225,6 @@
             line-height: 1.3;
             border-radius: 4px;
             transition: var(--transition);
-            cursor: pointer;
             font-weight: 400;
         }
 
@@ -262,7 +250,6 @@
 
         .config-section {
             background: var(--widget-bg);
-            backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             padding: 20px;
@@ -356,6 +343,8 @@
         }
 
         .stop-item {
+            content-visibility: auto;
+            contain-intrinsic-size: auto 44px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -385,6 +374,10 @@
             font-size: 0.9em;
         }
 
+        .stop-item .stop-suffix {
+            color: var(--text-secondary);
+        }
+
         .transport-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -393,8 +386,6 @@
 
         .widget {
             background: var(--widget-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             padding: 16px;
@@ -402,7 +393,10 @@
             transition: var(--transition);
             position: relative;
             overflow: hidden;
-            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .widget.is-new {
+            animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .widget.dragging {
@@ -439,10 +433,6 @@
 
         .widget-header {
             margin: 0 0 14px 0;
-            background: linear-gradient(135deg, var(--accent-color), var(--text-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
             text-align: center;
@@ -458,19 +448,16 @@
         .widget-header .drag-handle {
             cursor: move;
             touch-action: none; /* évite le défilement de la page pendant le glisser tactile */
-            color: var(--text-secondary);
+            color: var(--accent-color);
             font-size: 1.3em;
             padding: 4px 8px;
             transition: var(--transition);
             opacity: 0.7;
             flex-shrink: 0;
-            background: none;
-            -webkit-text-fill-color: var(--text-secondary);
         }
 
         .widget-header .drag-handle:hover {
             color: var(--accent-color);
-            -webkit-text-fill-color: var(--accent-color);
             opacity: 1;
             transform: scale(1.15);
         }
@@ -481,13 +468,25 @@
 
         .widget-header .drag-handle i {
             color: inherit;
-            -webkit-text-fill-color: inherit;
             margin: 0;
         }
 
         .widget-header .title {
             flex: 1;
             text-align: center;
+            font-size: inherit;
+            font-weight: inherit;
+            letter-spacing: inherit;
+            background: linear-gradient(135deg, var(--accent-color), var(--text-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stop-suffix {
+            font-size: 0.7em;
+            font-weight: 400;
+            opacity: 0.8;
         }
 
         .widget-header .actions {
@@ -533,6 +532,10 @@
         .filter-button.active {
             background: var(--accent-color);
             color: #0f0f23;
+        }
+
+        .filter-button.active i {
+            color: inherit;
         }
 
         .filter-button i, .remove-button i {
@@ -898,6 +901,14 @@
             font-style: italic;
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .datetime-calendar-widget {
                 grid-template-columns: 1fr !important;
@@ -954,6 +965,7 @@
     </style>
 </head>
 <body>
+    <h1 class="sr-only">Prochains passages aux arrêts du réseau de Nantes</h1>
     <div class="header-widgets">
         <div class="base-widget datetime-calendar-widget">
             <div class="datetime-section">
@@ -1013,7 +1025,7 @@
         </section>
 
         <div class="refresh-bar hidden" id="refreshBar">
-            <button class="refresh-button" id="refreshBtn">
+            <button class="refresh-button" id="refreshBtn" type="button" disabled>
                 <i class="fas fa-sync-alt"></i>
                 <span id="refreshLabel">Chargement...</span>
             </button>
@@ -1032,9 +1044,19 @@
         // Tables de lookup construites au démarrage
         const STOP_MAP = {};       // { placeId: { name, quays } }
         const QUAY_TO_PLACE = {};  // { quayId: placeId }
+        const NAME_COUNT = new Map();  // nom d'arrêt -> nombre de lieux portant ce nom
         for (const [name, placeId, quays] of STOP_LIST) {
             STOP_MAP[placeId] = { name, quays };
             for (const q of quays) QUAY_TO_PLACE[q] = placeId;
+            NAME_COUNT.set(name, (NAME_COUNT.get(name) || 0) + 1);
+        }
+
+        // Nom d'un arrêt ; `duplicate` est vrai si plusieurs lieux portent le même nom
+        // (on affiche alors le numéro du lieu pour les distinguer)
+        function stopInfo(code) {
+            const stop = STOP_MAP[code];
+            if (!stop) return { name: String(code), duplicate: false };
+            return { name: stop.name, duplicate: NAME_COUNT.get(stop.name) > 1 };
         }
 
         const CONFIG = {
@@ -1043,6 +1065,8 @@
                 DISPLAY: 1000
             },
             FETCH_COOLDOWN_S: 30,      // limite de l'API : 1 requête / 30 s pour tous les arrêts
+            MIN_MANUAL_RETRY_MS: 5000, // délai minimal avant un réessai manuel après une erreur
+            SEARCH_DEBOUNCE_MS: 120,   // délai de saisie avant de filtrer la liste d'arrêts
             MAX_ROWS: 10,              // passages affichés par arrêt
             MIN_DELAY_DISPLAYED: 2,    // retard (min) à partir duquel on l'affiche
             SIRI_ENDPOINT: 'https://api.okina.fr/gateway/sem/realtime/anshar/services',
@@ -1126,24 +1150,40 @@
             }
         };
 
+        // Formateurs créés une seule fois (leur création est coûteuse)
+        const PARIS_TIME = new Intl.DateTimeFormat(CONFIG.LOCALE, {
+            hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: CONFIG.TIMEZONE
+        });
+        const PARIS_HOUR_MINUTE = new Intl.DateTimeFormat(CONFIG.LOCALE, {
+            hour: '2-digit', minute: '2-digit', timeZone: CONFIG.TIMEZONE
+        });
+        const PARIS_DATE = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric', month: 'numeric', day: 'numeric', timeZone: CONFIG.TIMEZONE
+        });
+
         const Utils = {
+            MONTHS: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
+                'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+
             formatTime(date) {
-                return date.toLocaleTimeString(CONFIG.LOCALE, {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    timeZone: CONFIG.TIMEZONE
-                });
+                return PARIS_TIME.format(date);
             },
 
-            formatDate(date) {
-                const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-                    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-                return {
-                    day: date.getDate(),
-                    month: months[date.getMonth()],
-                    monthYear: `${months[date.getMonth()]} ${date.getFullYear()}`
-                };
+            formatHourMinute(date) {
+                return PARIS_HOUR_MINUTE.format(date);
+            },
+
+            // Date du jour à Paris (comme l'horloge), quel que soit le fuseau de l'appareil
+            parisDate(date) {
+                const parts = {};
+                for (const { type, value } of PARIS_DATE.formatToParts(date)) parts[type] = Number(value);
+                return { year: parts.year, month: parts.month, day: parts.day };
+            },
+
+            // Minuscules, sans accents ni ponctuation : pour la recherche d'arrêts
+            normalize(text) {
+                return String(text).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                    .toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
             },
 
             // Sûr dans du texte ET dans des attributs HTML entre guillemets
@@ -1184,27 +1224,28 @@
                 const timeElement = document.getElementById('digital-time');
                 if (timeElement) timeElement.textContent = Utils.formatTime(now);
 
-                // Date et calendrier : reconstruits uniquement quand le jour change
-                const dateKey = `${now.getFullYear()}-${now.getMonth()}-${now.getDate()}`;
+                // Date et calendrier d'après l'heure de Paris (comme l'horloge),
+                // reconstruits uniquement quand le jour change
+                const { year, month, day } = Utils.parisDate(now);
+                const dateKey = `${year}-${month}-${day}`;
                 if (dateKey === this.lastDateKey) return;
                 this.lastDateKey = dateKey;
 
-                const formatted = Utils.formatDate(now);
                 const dayElement = document.getElementById('day');
                 const monthElement = document.getElementById('month');
-                if (dayElement) dayElement.textContent = formatted.day;
-                if (monthElement) monthElement.textContent = formatted.month.toUpperCase();
+                if (dayElement) dayElement.textContent = day;
+                if (monthElement) monthElement.textContent = Utils.MONTHS[month - 1].toUpperCase();
 
-                this.updateCalendar(now, formatted.monthYear);
+                this.updateCalendar(year, month, day);
             }
 
-            updateCalendar(now, monthYear) {
+            updateCalendar(year, month, currentDay) {
                 const headerElement = document.getElementById('calendar-month-year');
-                if (headerElement) headerElement.textContent = monthYear.toUpperCase();
+                if (headerElement) headerElement.textContent = `${Utils.MONTHS[month - 1]} ${year}`.toUpperCase();
 
-                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).getDay();
-                const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-                const currentDay = now.getDate();
+                // Calcul en UTC : le calendrier ne dépend pas du fuseau de l'appareil
+                const firstDay = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
+                const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
 
                 let calendarHTML = '';
                 const emptyDays = firstDay === 0 ? 6 : firstDay - 1;
@@ -1226,12 +1267,17 @@
         class StopManager {
             constructor(transportManager) {
                 this.transport = transportManager;
-                // Liste des arrêts issue des données embarquées (pas d'API)
-                AppState.availableStops = STOP_LIST.map(([name, placeId, quays]) => ({
-                    codeLieu: String(placeId),
-                    libelle: name,
-                    quays
-                }));
+                this.searchTimer = null;
+                // Liste des arrêts issue des données embarquées (pas d'API), triée une seule fois
+                AppState.availableStops = STOP_LIST
+                    .map(([name, placeId, quays]) => ({
+                        codeLieu: String(placeId),
+                        libelle: name,
+                        quays,
+                        duplicate: NAME_COUNT.get(name) > 1,
+                        search: Utils.normalize(name)
+                    }))
+                    .sort((a, b) => a.libelle.toLowerCase().localeCompare(b.libelle.toLowerCase(), CONFIG.LOCALE));
                 this.renderStopSelector();
                 this.setupEventListeners();
             }
@@ -1240,44 +1286,36 @@
                 const container = document.getElementById('stopList');
                 if (!container) return;
 
-                const filteredStops = this.filterStops();
+                const stops = this.filterStops();
 
-                if (filteredStops.length === 0) {
+                if (stops.length === 0) {
                     container.innerHTML = '<div class="error">Aucun arrêt trouvé</div>';
                     return;
                 }
 
-                const html = filteredStops.map(stop => `
+                const selected = new Set(AppState.selectedStops);
+                container.innerHTML = stops.map(stop => `
                     <div class="stop-item">
                         <input type="checkbox"
                                id="stop-${stop.codeLieu}"
                                value="${stop.codeLieu}"
-                               ${AppState.selectedStops.includes(stop.codeLieu) ? 'checked' : ''}>
-                        <label for="stop-${stop.codeLieu}">${Utils.escapeHtml(stop.libelle || stop.codeLieu)}</label>
+                               ${selected.has(stop.codeLieu) ? 'checked' : ''}>
+                        <label for="stop-${stop.codeLieu}">${Utils.escapeHtml(stop.libelle)}${stop.duplicate ? ` <span class="stop-suffix">n° ${stop.codeLieu}</span>` : ''}</label>
                     </div>
                 `).join('');
-
-                container.innerHTML = html;
-
-                container.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                    checkbox.addEventListener('change', (e) => this.handleStopSelection(e));
-                });
             }
 
+            // Arrêts correspondant à la recherche (sans accents ni casse), sélectionnés en premier
             filterStops() {
-                // Copie : ne jamais trier AppState.availableStops en place
-                let stops = [...AppState.availableStops];
-                if (AppState.searchQuery) {
-                    const query = AppState.searchQuery.toLowerCase().trim();
-                    stops = stops.filter(stop => (stop.libelle || '').toLowerCase().includes(query));
-                }
-                return stops.sort((a, b) => {
-                    const aSelected = AppState.selectedStops.includes(a.codeLieu);
-                    const bSelected = AppState.selectedStops.includes(b.codeLieu);
-                    if (aSelected && !bSelected) return -1;
-                    if (!aSelected && bSelected) return 1;
-                    return (a.libelle || a.codeLieu).toLowerCase().localeCompare((b.libelle || b.codeLieu).toLowerCase());
-                });
+                const query = Utils.normalize(AppState.searchQuery);
+                const matching = query
+                    ? AppState.availableStops.filter(stop => stop.search.includes(query))
+                    : AppState.availableStops;
+                const selected = new Set(AppState.selectedStops);
+                return [
+                    ...matching.filter(stop => selected.has(stop.codeLieu)),
+                    ...matching.filter(stop => !selected.has(stop.codeLieu))
+                ];
             }
 
             handleStopSelection(event) {
@@ -1299,6 +1337,14 @@
                 const selector = document.getElementById('stopSelector');
                 const searchInput = document.getElementById('searchInput');
                 const clearStorageButton = document.getElementById('clearStorage');
+                const stopList = document.getElementById('stopList');
+
+                // Délégation : la liste (plus d'un millier d'éléments) est régénérée à chaque recherche
+                if (stopList) {
+                    stopList.addEventListener('change', (e) => {
+                        if (e.target.matches('input[type="checkbox"]')) this.handleStopSelection(e);
+                    });
+                }
 
                 if (toggleButton && selector) {
                     toggleButton.addEventListener('click', () => {
@@ -1314,7 +1360,8 @@
                 if (searchInput) {
                     searchInput.addEventListener('input', (e) => {
                         AppState.searchQuery = e.target.value;
-                        this.renderStopSelector();
+                        clearTimeout(this.searchTimer);
+                        this.searchTimer = setTimeout(() => this.renderStopSelector(), CONFIG.SEARCH_DEBOUNCE_MS);
                     });
                 }
 
@@ -1337,12 +1384,21 @@
                 for (const code of AppState.selectedStops) {
                     if (Array.isArray(saved.cachedData?.[code])) this.cachedByStop[code] = saved.cachedData[code];
                 }
-                this.lastFetchTime = saved.lastFetchTime || 0;
+                // Un horodatage illisible ou situé dans le futur (horloge déréglée) bloquerait les requêtes
+                const last = Number(saved.lastFetchTime);
+                this.lastFetchTime = Number.isFinite(last) && last > 0 && last <= Date.now() ? last : 0;
                 this.lastFailed = false;
                 this.fetchInProgress = false;
                 this.countdownInterval = null;
                 this.displayInterval = null;
+                this.openFilterStop = null;      // arrêt dont le panneau de filtres est ouvert
                 this.onSelectionChange = null;   // appelé quand la sélection change depuis un widget
+                this.onVisibilityChange = () => {
+                    // Retour sur l'onglet : affichage à jour, et requête si le délai est écoulé
+                    if (document.hidden) return;
+                    this.refreshDisplays();
+                    this.startCountdown();
+                };
                 const refreshBtn = document.getElementById('refreshBtn');
                 if (refreshBtn) refreshBtn.addEventListener('click', () => this.forceRefresh());
             }
@@ -1351,6 +1407,7 @@
                 this.updateTransportWidgets();
                 // Rafraîchit l'affichage (minutes restantes, passages écoulés) sans nouvelle requête
                 this.displayInterval = setInterval(() => this.refreshDisplays(), CONFIG.REFRESH_INTERVALS.DISPLAY);
+                document.addEventListener('visibilitychange', this.onVisibilityChange);
             }
 
             updateTransportWidgets() {
@@ -1367,20 +1424,24 @@
                 }
                 if (refreshBar) refreshBar.classList.remove('hidden');
 
+                // Seules les cartes nouvellement ajoutées rejouent l'animation d'apparition
+                const previous = new Set(Array.from(container.querySelectorAll('.widget'), w => w.dataset.stopCode));
+
                 container.innerHTML = AppState.selectedStops.map(stopCode => {
-                    const stop = AppState.availableStops.find(s => s.codeLieu === stopCode) || { libelle: stopCode };
-                    const name = Utils.escapeHtml(stop.libelle);
+                    const { name: stopName, duplicate } = stopInfo(stopCode);
+                    const name = Utils.escapeHtml(duplicate ? `${stopName} (n° ${stopCode})` : stopName);
+                    const titleHtml = Utils.escapeHtml(stopName) + (duplicate ? ` <small class="stop-suffix">n° ${stopCode}</small>` : '');
                     return `
-                        <article class="widget" draggable="true" data-stop-code="${stopCode}">
-                            <h2 class="widget-header">
+                        <article class="widget${previous.has(stopCode) ? '' : ' is-new'}" draggable="true" data-stop-code="${stopCode}">
+                            <div class="widget-header">
                                 <div class="drag-handle" role="button" tabindex="0"
                                      title="Maintenir pour déplacer (ou flèches du clavier)"
                                      aria-label="Déplacer l'arrêt ${name} (flèches du clavier)">
                                     <i class="fas fa-grip-vertical" aria-hidden="true"></i>
                                 </div>
-                                <div class="title">
-                                    <i class="fas fa-bus" aria-hidden="true"></i> ${name}
-                                </div>
+                                <h2 class="title">
+                                    <i class="fas fa-bus" aria-hidden="true"></i> ${titleHtml}
+                                </h2>
                                 <div class="actions">
                                     <button class="filter-button" data-stop="${stopCode}"
                                             aria-expanded="false" aria-controls="filter-${stopCode}"
@@ -1389,7 +1450,7 @@
                                         <span>Filtrer</span>
                                     </button>
                                 </div>
-                            </h2>
+                            </div>
                             <div class="filter-panel" id="filter-${stopCode}">
                                 <div class="filter-panel-header">
                                     <div class="filter-panel-title">
@@ -1432,7 +1493,7 @@
 
                 container.querySelectorAll('.filter-button').forEach(button => {
                     button.addEventListener('click', (e) => {
-                        this.toggleFilterPanel(e.currentTarget.dataset.stop, e.currentTarget);
+                        this.toggleFilterPanel(e.currentTarget.dataset.stop);
                     });
                 });
 
@@ -1462,26 +1523,29 @@
                 for (const stopCode of AppState.selectedStops) {
                     if (this.cachedByStop[stopCode]) this.updateFilterOptions(stopCode, this.cachedByStop[stopCode]);
                 }
+                // Le panneau de filtres ouvert le reste après un nouveau rendu (déplacement, ajout...)
+                this.setOpenFilterPanel(AppState.selectedStops.includes(this.openFilterStop) ? this.openFilterStop : null);
                 this.refreshDisplays();
 
                 // Le décompte pilote le cycle de requêtes (pas de timer séparé)
                 this.startCountdown();
             }
 
-            toggleFilterPanel(stopCode, button) {
-                const panel = document.getElementById(`filter-${stopCode}`);
-                if (!panel) return;
-                const isActive = panel.classList.contains('active');
-                document.querySelectorAll('.filter-panel').forEach(p => p.classList.remove('active'));
-                document.querySelectorAll('.filter-button').forEach(b => {
-                    b.classList.remove('active');
-                    b.setAttribute('aria-expanded', 'false');
+            toggleFilterPanel(stopCode) {
+                this.setOpenFilterPanel(this.openFilterStop === stopCode ? null : stopCode);
+            }
+
+            // Ouvre le panneau de filtres d'un arrêt (et ferme les autres) ; null = tout fermer
+            setOpenFilterPanel(stopCode) {
+                this.openFilterStop = stopCode;
+                document.querySelectorAll('.filter-panel').forEach(panel => {
+                    panel.classList.toggle('active', panel.id === `filter-${stopCode}`);
                 });
-                if (!isActive) {
-                    panel.classList.add('active');
-                    button.classList.add('active');
-                    button.setAttribute('aria-expanded', 'true');
-                }
+                document.querySelectorAll('.filter-button').forEach(button => {
+                    const isOpen = button.dataset.stop === stopCode;
+                    button.classList.toggle('active', isOpen);
+                    button.setAttribute('aria-expanded', String(isOpen));
+                });
             }
 
             // ---------- Cycle de requêtes ----------
@@ -1491,16 +1555,20 @@
                 return Math.max(0, CONFIG.FETCH_COOLDOWN_S - elapsed);
             }
 
-            async loadAllStopsData() {
+            // `force` : réessai manuel après une erreur (ignore le délai de 30 s)
+            async loadAllStopsData(force = false) {
                 if (AppState.selectedStops.length === 0) return;
                 if (this.fetchInProgress) return;
 
                 // Respecter le rate limit : 1 requête / 30 s
-                if (Date.now() - this.lastFetchTime < (CONFIG.FETCH_COOLDOWN_S - 1) * 1000) return;
+                if (!force && Date.now() - this.lastFetchTime < (CONFIG.FETCH_COOLDOWN_S - 1) * 1000) return;
 
-                // Collecter tous les QuayIds des arrêts sélectionnés
+                // Arrêts concernés par cette requête : la sélection peut changer pendant l'attente
+                const requested = [...AppState.selectedStops];
+
+                // Collecter tous les QuayIds des arrêts demandés
                 const quayIds = [];
-                for (const stopCode of AppState.selectedStops) {
+                for (const stopCode of requested) {
                     const info = STOP_MAP[parseInt(stopCode, 10)];
                     if (info) quayIds.push(...info.quays);
                 }
@@ -1509,7 +1577,7 @@
                 this.fetchInProgress = true;
                 const btn = document.getElementById('refreshBtn');
                 const label = document.getElementById('refreshLabel');
-                if (btn) { btn.classList.remove('ready'); btn.classList.add('fetching'); }
+                if (btn) { btn.classList.remove('ready'); btn.classList.add('fetching'); btn.disabled = true; }
                 if (label) label.textContent = 'Chargement...';
                 this.refreshDisplays();
 
@@ -1534,10 +1602,13 @@
                             if (dep.stopPlaceId) (byStop[dep.stopPlaceId] ||= []).push(dep);
                         }
                         for (const deps of Object.values(byStop)) {
-                            deps.sort((a, b) => new Date(a.expectedTime) - new Date(b.expectedTime));
+                            deps.sort((a, b) => this.sortKey(a) - this.sortKey(b));
                         }
 
-                        for (const stopCode of AppState.selectedStops) {
+                        // Seuls les arrêts demandés ont une réponse : un arrêt ajouté pendant
+                        // la requête attend le cycle suivant (sinon il afficherait « aucun passage »)
+                        for (const stopCode of requested) {
+                            if (!AppState.selectedStops.includes(stopCode)) continue;
                             const data = byStop[stopCode] || [];
                             this.cachedByStop[stopCode] = data;
                             this.updateFilterOptions(stopCode, data);
@@ -1602,6 +1673,8 @@
                             vehicleMode,
                             expectedTime: expectedDep,
                             aimedTime: aimedDep,
+                            expectedMs: Date.parse(expectedDep),   // lus une seule fois, pas à chaque seconde
+                            aimedMs: Date.parse(aimedDep),
                             status,
                             cancelled: /cancel/i.test(status)
                         });
@@ -1625,13 +1698,18 @@
                 const label = document.getElementById('refreshLabel');
                 if (!btn || !label) return;
                 this.stopCountdown();
-                // Après une erreur, le bouton reste actif pour forcer un nouvel essai
-                btn.classList.toggle('ready', this.lastFailed);
 
                 // Le temps restant est relu à chaque tick (robuste si l'onglet est ralenti)
                 const tick = () => {
+                    // Après une erreur, le bouton permet de forcer un nouvel essai (avec un délai minimal)
+                    const canRetry = this.lastFailed && Date.now() - this.lastFetchTime >= CONFIG.MIN_MANUAL_RETRY_MS;
+                    btn.disabled = !canRetry;
+                    btn.classList.toggle('ready', canRetry);
+
                     const remaining = this.secondsUntilNextFetch();
                     if (remaining <= 0) {
+                        // Onglet masqué : on ne sollicite pas l'API ; la requête part au retour
+                        if (document.hidden) return;
                         this.stopCountdown();
                         this.loadAllStopsData();
                         return;
@@ -1639,19 +1717,21 @@
                     label.textContent = this.lastFailed ? `Réessai dans ${remaining}s` : `${remaining}s`;
                 };
                 tick();
-                if (!this.fetchInProgress && this.secondsUntilNextFetch() > 0) {
+                if (!this.fetchInProgress && (this.secondsUntilNextFetch() > 0 || document.hidden)) {
                     this.countdownInterval = setInterval(tick, 1000);
                 }
             }
 
             forceRefresh() {
                 if (this.fetchInProgress || !this.lastFailed) return;
-                this.lastFetchTime = 0;
-                this.loadAllStopsData();
+                // Pas de rafale : au moins MIN_MANUAL_RETRY_MS après la dernière tentative
+                if (Date.now() - this.lastFetchTime < CONFIG.MIN_MANUAL_RETRY_MS) return;
+                this.loadAllStopsData(true);
             }
 
             // Redessine tous les arrêts depuis le cache (appelé chaque seconde)
             refreshDisplays() {
+                if (document.hidden) return;   // inutile sur un onglet masqué ; refait au retour
                 for (const stopCode of AppState.selectedStops) {
                     const data = this.cachedByStop[stopCode];
                     if (data) this.displayStopData(stopCode, data);
@@ -1854,6 +1934,13 @@
                     }
                 }, { passive: true });
 
+                // Geste interrompu (appel, défilement système...) : rendre la carte à son état normal
+                dragHandle.addEventListener('touchcancel', () => {
+                    isDragging = false;
+                    widget.style.opacity = '';
+                    document.querySelectorAll('.widget.drag-over').forEach(w => w.classList.remove('drag-over'));
+                }, { passive: true });
+
                 dragHandle.addEventListener('touchend', (e) => {
                     if (!isDragging) return;
                     widget.style.opacity = '';
@@ -1887,6 +1974,7 @@
 
                 widget.addEventListener('dragend', () => {
                     widget.classList.remove('dragging');
+                    document.querySelectorAll('.widget.drag-over').forEach(w => w.classList.remove('drag-over'));
                     isDragging = false;
                     widget.setAttribute('draggable', 'true');
                 });
@@ -2009,11 +2097,23 @@
                 return bus.destination || 'Direction inconnue';
             }
 
+            // Horodatage en ms (`expected` ou `aimed`), NaN si absent ou invalide.
+            // Les caches enregistrés avant l'ajout des champs *Ms sont relus depuis le texte.
+            timeMs(bus, which) {
+                const ms = bus[`${which}Ms`];
+                return Number.isFinite(ms) ? ms : Date.parse(bus[`${which}Time`]);
+            }
+
+            // Clé de tri : les heures illisibles passent en dernier
+            sortKey(bus) {
+                const ms = this.timeMs(bus, 'expected');
+                return Number.isNaN(ms) ? Number.MAX_SAFE_INTEGER : ms;
+            }
+
             // Minutes avant le passage (arrondi), ou null si l'heure est inconnue
             minutesUntil(bus) {
-                if (!bus.expectedTime) return null;
-                const time = new Date(bus.expectedTime).getTime();
-                return Number.isNaN(time) ? null : Math.round((time - Date.now()) / 60000);
+                const ms = this.timeMs(bus, 'expected');
+                return Number.isNaN(ms) ? null : Math.round((ms - Date.now()) / 60000);
             }
 
             isUpcoming(bus) {
@@ -2023,8 +2123,7 @@
 
             // Retard en minutes (heure prévue - heure théorique), 0 si inconnu
             getDelayMin(bus) {
-                if (!bus.aimedTime || !bus.expectedTime) return 0;
-                const delay = Math.round((new Date(bus.expectedTime) - new Date(bus.aimedTime)) / 60000);
+                const delay = Math.round((this.timeMs(bus, 'expected') - this.timeMs(bus, 'aimed')) / 60000);
                 return Number.isNaN(delay) ? 0 : delay;
             }
 
@@ -2033,15 +2132,12 @@
                 if (minutes === null) return 'N/A';
                 if (minutes <= 0) return 'Proche';
                 if (minutes < 60) return `${minutes} min`;
-                return new Date(bus.expectedTime).toLocaleTimeString(CONFIG.LOCALE, {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: CONFIG.TIMEZONE
-                });
+                return Utils.formatHourMinute(new Date(this.timeMs(bus, 'expected')));
             }
 
             destroy() {
                 this.stopCountdown();
+                document.removeEventListener('visibilitychange', this.onVisibilityChange);
                 if (this.displayInterval) {
                     clearInterval(this.displayInterval);
                     this.displayInterval = null;
@@ -2085,7 +2181,7 @@
             app.init();
         });
 
-        window.addEventListener('beforeunload', () => {
+        window.addEventListener('pagehide', () => {
             app?.destroy();
         });
     </script>

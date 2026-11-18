@@ -10,10 +10,10 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 
 ## Fonctionnalités
 
-- Choix libre des arrêts, avec recherche, et réorganisation des cartes par glisser-déposer (souris, tactile ou flèches du clavier).
+- Choix libre des arrêts, avec recherche insensible aux accents (le numéro du lieu s'affiche pour les arrêts homonymes, comme « Jean Jaurès »), et réorganisation des cartes par glisser-déposer (souris, tactile ou flèches du clavier).
 - Prochains passages en minutes, mis à jour chaque seconde ; retards et suppressions signalés.
 - Filtres par ligne et par destination pour chaque arrêt.
-- Actualisation automatique toutes les 30 secondes, avec nouvel essai si le réseau est coupé.
+- Actualisation automatique toutes les 30 secondes, avec nouvel essai si le réseau est coupé ; aucune requête tant que l'onglet est masqué.
 - Horloge et calendrier ; interface en français, adaptée au mobile.
 - Aucun serveur, aucun build : tout tourne dans le navigateur.
 
@@ -52,7 +52,7 @@ L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audienc
 - `docs/apercu.png` — capture d'écran du README (données d'exemple, non issues de l'API) ; à régénérer si l'interface change nettement.
 - `icons/` — `favicon.svg` est la source de l'icône de l'onglet (un bus vu de face avec des ondes « temps réel », aux couleurs de l'appli) ; `apple-touch-icon.png` (180 px, sans coins arrondis) est le seul fichier référencé par la page. L'icône d'onglet elle-même est **embarquée dans le `<head>`** en data URI (SVG + PNG 32 px de repli), donc la page l'affiche même copiée seule. Pour la modifier : éditer `icons/favicon.svg`, puis réencoder les deux data URI du `<head>` (SVG minifié et percent-encodé, PNG 32 px en base64) et régénérer `apple-touch-icon.png`.
 
-Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Les textes de l'interface, les commentaires et les messages de commit sont en français ; garder cette convention. Les données live demandent l'accès réseau à `api.okina.fr` et une réponse CORS autorisée par le navigateur ; aucune ressource n'est chargée depuis un CDN. Pour vérifier un changement, charger la page (Playwright/Chromium convient pour des vérifications scriptées, en simulant l'API avec `page.route`).
+Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Côté CSS : le dégradé de texte de l'en-tête de carte ne s'applique qu'au titre (`.widget-header .title`), car `-webkit-text-fill-color: transparent` est hérité et rendait invisible le libellé du bouton « Filtrer » ouvert ; pas de `backdrop-filter` (coût GPU sans effet visible sur ce fond) ; `prefers-reduced-motion` est respecté. Les textes de l'interface, les commentaires et les messages de commit sont en français ; garder cette convention. Les données live demandent l'accès réseau à `api.okina.fr` et une réponse CORS autorisée par le navigateur ; aucune ressource n'est chargée depuis un CDN. Pour vérifier un changement, charger la page (Playwright/Chromium convient pour des vérifications scriptées, en simulant l'API avec `page.route`).
 
 ### Source de données : SIRI (Okina)
 
@@ -80,10 +80,14 @@ Points qui traversent plusieurs classes :
 
 - **Ordre d'initialisation** (`DashboardApp.init`) : `StorageManager.load()` → `TimeManager` → `TransportManager(saved)` → `StorageManager.attach()` → `StopManager(transportManager)` → `transportManager.onSelectionChange` (rappel qui rafraîchit le sélecteur quand un widget retire un arrêt) → `transportManager.start()`. Les classes ne passent pas par `window.*`.
 - **Le décompte pilote les requêtes.** `startCountdown()` relit `secondsUntilNextFetch()` chaque seconde et appelle `loadAllStopsData()` à 0 ; `loadAllStopsData()` relance `startCountdown()` à la fin (succès, 429 ou erreur). Pas de timer par arrêt.
-- **Erreur réseau / HTTP / XML illisible** : `lastFailed = true`, `lastFetchTime = maintenant`, nouvel essai automatique 30 s plus tard (libellé « Réessai dans Ns »). Le bouton d'actualisation (classe `.ready`) n'est actif qu'après une erreur et permet de forcer l'essai (`forceRefresh`).
+- **Erreur réseau / HTTP / XML illisible** : `lastFailed = true`, `lastFetchTime = maintenant`, nouvel essai automatique 30 s plus tard (libellé « Réessai dans Ns »). Le bouton d'actualisation n'est activé (`disabled` levé, classe `.ready`) que 5 s après une erreur (`CONFIG.MIN_MANUAL_RETRY_MS`) et permet alors de forcer l'essai (`forceRefresh` → `loadAllStopsData(true)`) : pas de rafale vers l'API.
+- **Onglet masqué** : le décompte n'envoie pas de requête et `refreshDisplays` ne redessine rien ; au retour (`visibilitychange`), l'affichage est rafraîchi et la requête part si le délai est écoulé.
+- **Requête et sélection** : `loadAllStopsData` ne met à jour que les arrêts de la liste `requested` (instantané pris à l'envoi) ; un arrêt ajouté pendant la requête attend le cycle suivant au lieu d'afficher à tort « Aucun passage prévu ». `lastFetchTime` lu dans le stockage est ignoré s'il est illisible ou dans le futur.
 - **L'affichage est redessiné chaque seconde depuis le cache** (`refreshDisplays`, via `displayInterval`) sans nouvelle requête : minutes restantes à jour, passages écoulés écartés avant la limite de 10 lignes. `setContent()` n'écrit dans le DOM que si le HTML a changé ; passer par lui pour tout contenu de `#content-<code>`. Un arrêt sans cache affiche un message d'attente avec le temps avant la prochaine requête.
 - **Cache persisté** : `save()` écrit `selectedStops`, `filters`, `lastFetchTime` et le cache des **seuls arrêts sélectionnés** ; `forgetStop()` purge filtres et cache d'un arrêt retiré. À la lecture, les codes inconnus de `STOP_MAP` sont ignorés (le stockage navigateur n'est pas fiable).
-- **Rendu en chaînes `innerHTML`.** `updateTransportWidgets()` reconstruit toutes les cartes quand la liste change. Toujours passer le texte dynamique par `Utils.escapeHtml`. Les étiquettes de filtre sont gérées par délégation d'événements sur `.filter-tags`.
+- **Rendu en chaînes `innerHTML`.** `updateTransportWidgets()` reconstruit toutes les cartes quand la liste change ; seules les nouvelles cartes portent la classe `.is-new` (animation d'apparition) et le panneau de filtres ouvert (`openFilterStop`) est rouvert après le rendu. Toujours passer le texte dynamique par `Utils.escapeHtml`. Les étiquettes de filtre (`.filter-tags`) et la liste d'arrêts (`#stopList`) sont gérées par délégation d'événements.
+- **Date et heure de Paris.** L'horloge, la date et le calendrier utilisent le fuseau `CONFIG.TIMEZONE` via des `Intl.DateTimeFormat` créés une fois (`Utils.parisDate`) ; le calendrier est calculé en UTC pour ne pas dépendre du fuseau de l'appareil.
+- **Arrêts homonymes.** `stopInfo(code)` indique si plusieurs lieux portent le même nom (19 cas dans `stops.js`) ; le numéro du lieu est alors affiché dans la liste et sur la carte. La recherche compare des noms normalisés (`Utils.normalize` : sans accents ni ponctuation).
 
 ### État et persistance
 
@@ -93,4 +97,4 @@ Si la forme des données sauvegardées change, incrémenter `CONFIG.STORAGE_KEY`
 
 ### Glisser-déposer
 
-`TransportManager.setupDragAndDrop()` ne déclenche le déplacement que depuis la poignée `.drag-handle` (un `mousedown` hors de la poignée met `draggable="false"` sur la carte), pour ne pas gêner les filtres et le bouton de suppression. La souris utilise l'API HTML5 de glisser-déposer ; le tactile utilise `touchstart/move/end` sur la poignée avec `elementFromPoint` (la poignée a `touch-action: none` pour éviter le défilement). Au clavier, les flèches sur la poignée appellent `moveStop()`. Tout aboutit à `AppState.selectedStops` réordonné puis sauvegardé.
+`TransportManager.setupDragAndDrop()` ne déclenche le déplacement que depuis la poignée `.drag-handle` (un `mousedown` hors de la poignée met `draggable="false"` sur la carte), pour ne pas gêner les filtres et le bouton de suppression. La souris utilise l'API HTML5 de glisser-déposer ; le tactile utilise `touchstart/move/end` sur la poignée avec `elementFromPoint` (la poignée a `touch-action: none` pour éviter le défilement ; `touchcancel` rend la carte à son état normal). Au clavier, les flèches sur la poignée appellent `moveStop()`. Tout aboutit à `AppState.selectedStops` réordonné puis sauvegardé.
