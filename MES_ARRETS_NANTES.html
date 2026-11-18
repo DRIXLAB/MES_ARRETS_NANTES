@@ -248,41 +248,36 @@
             gap: var(--spacing);
         }
 
+        /* Panneau de sélection des arrêts (affiché par le bouton « Configurer ») */
         .config-section {
             background: var(--widget-bg);
             border: 1px solid var(--border-color);
             border-radius: var(--border-radius);
             padding: 20px;
             box-shadow: var(--glass-shadow);
-            margin-bottom: var(--spacing);
         }
 
-        .config-header {
+        /* Barre d'outils : bouton « Configurer » à côté du décompte d'actualisation */
+        .toolbar {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .config-title {
-            font-size: 1.2em;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-color), var(--text-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            gap: 10px;
         }
 
         .config-button {
             background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary));
             color: #0f0f23;
             border: none;
-            padding: 10px 20px;
+            padding: 7px 16px;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 0.9em;
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .config-button:hover {
@@ -566,9 +561,7 @@
 
         .refresh-bar {
             display: flex;
-            justify-content: flex-end;
             align-items: center;
-            padding: 0 0 10px 0;
         }
 
         .refresh-button {
@@ -996,40 +989,38 @@
     </div>
 
     <main class="main-container">
-        <section class="config-section">
-            <div class="config-header">
-                <h2 class="config-title"><i class="fas fa-cog"></i> Configuration des arrêts</h2>
-                <button class="config-button" id="toggleConfig" aria-expanded="false" aria-controls="stopSelector">
-                    <i class="fas fa-chevron-down" aria-hidden="true"></i> Configurer
-                </button>
-            </div>
-            <div id="stopSelector" class="hidden">
-                <div class="search-container">
-                    <label for="searchInput" class="sr-only">Rechercher un arrêt</label>
-                    <input type="search"
-                           class="search-input"
-                           id="searchInput"
-                           autocomplete="off"
-                           placeholder="Rechercher un arrêt...">
-                </div>
-                <div id="stopList" class="stop-selector"></div>
-                <div class="storage-info">
-                    <i class="fas fa-save"></i>
-                    <span>Vos préférences sont sauvegardées automatiquement dans votre navigateur</span>
-                </div>
-                <button class="clear-storage-button" id="clearStorage">
-                    <i class="fas fa-trash-alt"></i>
-                    <span>Effacer toutes les données sauvegardées</span>
-                </button>
-            </div>
-        </section>
-
-        <div class="refresh-bar hidden" id="refreshBar">
-            <button class="refresh-button" id="refreshBtn" type="button" disabled>
-                <i class="fas fa-sync-alt"></i>
-                <span id="refreshLabel">Chargement...</span>
+        <div class="toolbar">
+            <button class="config-button" id="toggleConfig" type="button" aria-expanded="false" aria-controls="stopSelector">
+                <i class="fas fa-chevron-down" aria-hidden="true"></i> Configurer
             </button>
+            <div class="refresh-bar hidden" id="refreshBar">
+                <button class="refresh-button" id="refreshBtn" type="button" disabled>
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i>
+                    <span id="refreshLabel">Chargement...</span>
+                </button>
+            </div>
         </div>
+
+        <section class="config-section hidden" id="stopSelector" aria-labelledby="configTitle">
+            <h2 class="sr-only" id="configTitle">Configuration des arrêts</h2>
+            <div class="search-container">
+                <label for="searchInput" class="sr-only">Rechercher un arrêt</label>
+                <input type="search"
+                       class="search-input"
+                       id="searchInput"
+                       autocomplete="off"
+                       placeholder="Rechercher un arrêt...">
+            </div>
+            <div id="stopList" class="stop-selector"></div>
+            <div class="storage-info">
+                <i class="fas fa-save" aria-hidden="true"></i>
+                <span>Vos préférences sont sauvegardées automatiquement dans votre navigateur</span>
+            </div>
+            <button class="clear-storage-button" id="clearStorage" type="button">
+                <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                <span>Effacer toutes les données sauvegardées</span>
+            </button>
+        </section>
 
         <section id="transportGrid" class="transport-grid"></section>
     </main>
@@ -1418,7 +1409,7 @@
 
                 if (AppState.selectedStops.length === 0) {
                     this.stopCountdown();
-                    container.innerHTML = '<div class="error" style="grid-column: 1/-1;">Aucun arrêt sélectionné. Configurez vos arrêts ci-dessus.</div>';
+                    container.innerHTML = '<div class="error" style="grid-column: 1/-1;">Aucun arrêt sélectionné. Cliquez sur « Configurer » pour en ajouter.</div>';
                     if (refreshBar) refreshBar.classList.add('hidden');
                     return;
                 }
