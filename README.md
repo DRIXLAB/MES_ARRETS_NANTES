@@ -19,7 +19,9 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 
 ## Utilisation
 
-Télécharger le dépôt et ouvrir `MES_ARRETS_NANTES.html` dans un navigateur (`stops.js`, `icons/` et `vendor/` doivent rester dans le même dossier). Cliquer sur « Configurer » pour ajouter des arrêts. Les données temps réel demandent un accès internet.
+**En ligne** : <https://drixlab.github.io/MES_ARRETS_NANTES/> (GitHub Pages).
+
+En local : télécharger le dépôt et ouvrir `MES_ARRETS_NANTES.html` dans un navigateur (`stops.js`, `icons/` et `vendor/` doivent rester dans le même dossier). Cliquer sur « Configurer » pour ajouter des arrêts. Les données temps réel demandent un accès internet.
 
 ## Données et crédits
 
@@ -47,6 +49,7 @@ L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audienc
 ### Fichiers
 
 - `MES_ARRETS_NANTES.html` — l'application : CSS dans `<style>`, balisage, puis un `<script>` inline avec toute la logique.
+- `index.html` — simple redirection vers `MES_ARRETS_NANTES.html`, pour que GitHub Pages serve l'application à la racine du site ; `.nojekyll` désactive le traitement Jekyll de Pages.
 - `stops.js` — données embarquées des arrêts (`STOP_LIST`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Il doit rester dans le même dossier que le HTML.
 - `vendor/` — police Inter (variable, sous-ensemble latin) et Font Awesome Free 6 (style solid uniquement), copiés depuis leurs paquets npm officiels avec leurs licences ; versions et procédure de mise à jour dans `vendor/README.md`.
 - `docs/apercu.png` — capture d'écran du README (données d'exemple, non issues de l'API) ; à régénérer si l'interface change nettement.
