@@ -10,12 +10,21 @@
     <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAFGUlEQVR4nLRXX0wcZRD/7d7e3h09akvLwdGEYqTkQKBQTQupNU20Io0mmkZjYkqNoInGakwfNGnSGms0jQ8+tA+NwT408cUaeKCW0liTqlSNSUstUOR/YyRQEBZogdu/zn53e9zt7QIX6yRkvm9mvvk/w56AJCgqqtqwtKS9z3GoMQxUEQ4ZdODoYGITku8Z0O8S7iL8qyyLX0hSl2TZ5KxDfn5FPc+jmeQLLJqlxA52ut3oKvJjZLZpcrK3PeFAOLy9DtAv/YcIM6YD2v7Jyf52rrCwYqOqoofoYbcIHxTd5syYLPMVvKJwh+zGYx6mKnkQdFuZCkTRaBDoXmPJJT+2wJ4+E7RQLqLPPAW5usokwnv9BnwdV+CZmnKUd+8RvYbLzy8fJebWtdZw4cALuHfsQxh+H4TBYVMSavEj4BaXEDxxEv7zLWvuBQrvDhcOVxhrraHyaCmm287D/20rgsc/hR7Oi2VpfAL3ThxH9MXnsGH/AXh7b6+oJ6UslAEjk+6VyQmPJEH68hTU0gjjCbd6sP7NwzByN0P4oztNT5rRJP283cPVaujt7kW0dhf0nBwEP/4MwU9OQs8LQanduapxJ/0sA2uJ/P+iCytFnindudFWlhdW81iLlIDfsR38+mwIug5e0+AlHk9nhukuGHocG/DEsTo7h+n+IUwN30nRr9O75Luwksfqu2/B09QAH61KHykWVYXOGp1jWNRUxhPpz6/FMLszusbOt9o60Nly0bUMvNsm08siEBsPIqAoCJgGFHkZKxZWCCvIUmM4xqc78QNMXsET+/agaNvDKfrTesCpVp7qSqbMR9HMHjmK+1eugnOZ5zQgHZHHK/HSG6+yzG0pyMPowIjjdPD2yBO1ycpiEfhlGQtXO9duPKYEAzd6KDMqe58tel1HU3BKC5t3XWMpNusKwpmCFjduZlCgLLjtBdcpMB/FHMjcuAUB1qAKTYvuuhF5tynw0rhYjRd6spbVNRN4rDKSaFQzGDtYdgW3+TcfmTX0koKdH7wH8cjbiVH0MxwfTdao5sgpy6Ma5/vpLCpqigP2jLtOgUA9YEZgzXnMiHVW084peyLJCZNvZtOefgsLrp5peqIJJ679jpEffkLZnhqUVpW5ZsJPTt+8eRs/X+/GvooS7N22lfHNYJz2TSIDyZFbTC/LQGwP9LZcwOTQKOQZCTvKS1iEYjwjvqQNaP61/fgbBv6ewNzcPOqLwiwjgpo+BYl9k5W1+aPkyC0IbspBcXU5fORENu0Eg0Zq197d2JK7EQEy7mcZUBmfbUC2jjXk+LzQqO4vV0UQeSjI+K09g+ifnk2bNhNzoVDZOF3y7DXyrcvCK58fY0skpda2XS8meiA1E1aZZPpUq/vmMqYWo06NOEEZyH2aLsV2piormKa0FxYUIJSdDTEajUdMez7eaAFNdc2ElxcwPDOPo9//gj+lecd/RIQ6qQeMLjrX2RvRhL/6BqGOydj97PMJ7899dRrnzp6Gk/yhxsNoaHwHC3HZluZTuDZ+IaXmyfI0HF28x2OcIbbktqsXFu473p3k7bKLiwuuHytEkThOOCOMj/eNbtpU+jrPcy1Ou/pyeyt4+tHo8/kRjS6xu5uzHRdNWY5kAyS7iEvftThGHgPuNUnqG020fW5uSb1h8M10LLB77PZtlwxr/QYkGOM4o2lmZoj9OPUsp++fQVEMnuV5QSbZKL3JJrxuJSMr0W3G75oNR+SvAfWgJI10W3L/AgAA//+hmI+LAAAABklEQVQDAJp9/cgMG0TfAAAAAElFTkSuQmCC">
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <!-- Ressources hébergées dans le dépôt (voir vendor/README.md) : aucun CDN -->
+    <link rel="stylesheet" href="vendor/fontawesome/css/fontawesome.min.css">
+    <link rel="stylesheet" href="vendor/fontawesome/css/solid.min.css">
     
     <style>
+        /* Police Inter (variable, sous-ensemble latin) hébergée dans vendor/inter */
+        @font-face {
+            font-family: 'Inter';
+            font-style: normal;
+            font-display: swap;
+            font-weight: 100 900;
+            src: url('vendor/inter/inter-latin-wght-normal.woff2') format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
         :root {
             --primary-bg: linear-gradient(135deg, #0f0f23, #1a1a2e, #16213e);
             --widget-bg: rgba(255, 255, 255, 0.05);

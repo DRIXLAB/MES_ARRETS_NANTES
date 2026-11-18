@@ -15,13 +15,13 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 
 ## Utilisation
 
-Télécharger le dépôt et ouvrir `MES_ARRETS_NANTES.html` dans un navigateur (`stops.js` et `icons/` doivent rester dans le même dossier). Cliquer sur « Configurer » pour ajouter des arrêts. Les données temps réel demandent un accès internet.
+Télécharger le dépôt et ouvrir `MES_ARRETS_NANTES.html` dans un navigateur (`stops.js`, `icons/` et `vendor/` doivent rester dans le même dossier). Cliquer sur « Configurer » pour ajouter des arrêts. Les données temps réel demandent un accès internet.
 
 ## Données et crédits
 
 - **Arrêts** : liste Naolib extraite du référentiel NeTEx (open data), embarquée dans `stops.js`. Ces données sont publiées sous [Open Database License (ODbL)](http://opendatacommons.org/licenses/odbl/) : `stops.js` en est un extrait et reste soumis à cette licence (attribution et partage dans les mêmes conditions).
 - **Passages en temps réel** : API SIRI (StopMonitoring) exposée par la passerelle Okina pour le réseau Naolib.
-- Polices : [Inter](https://fonts.google.com/specimen/Inter) (Google Fonts) ; icônes : [Font Awesome](https://fontawesome.com/) 6.
+- **Police** [Inter](https://rsms.me/inter/) (licence SIL OFL 1.1) et **icônes** [Font Awesome Free](https://fontawesome.com/) 6 (icônes CC BY 4.0, polices SIL OFL 1.1, code MIT), hébergées dans `vendor/` avec leurs licences.
 
 L'API impose **une requête toutes les 30 secondes** : si vous modifiez ou déployez ce projet, conservez cette limite et n'ajoutez pas de requêtes supplémentaires.
 
@@ -30,22 +30,24 @@ L'API impose **une requête toutes les 30 secondes** : si vous modifiez ou dépl
 L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audience.
 
 - Vos arrêts, vos filtres et les derniers passages reçus sont conservés **uniquement dans le `localStorage` de votre navigateur**, et le bouton « Effacer toutes les données sauvegardées » les supprime.
-- Pour fonctionner, la page contacte `api.okina.fr` (avec les identifiants des quais des arrêts choisis), ainsi que Google Fonts et cdnjs pour les polices et les icônes. Ces services voient l'adresse IP du visiteur.
+- Pour fonctionner, la page contacte **uniquement** `api.okina.fr` (avec les identifiants des quais des arrêts choisis), qui voit l'adresse IP du visiteur. Les polices et les icônes sont servies par le site lui-même : aucun CDN ni service tiers n'est appelé.
 
 ## Licence
 
 - **Code de l'application** : [GNU GPL v3](LICENSE). Vous pouvez l'utiliser, l'étudier, le modifier et le redistribuer, à condition de conserver la même licence pour les versions modifiées que vous distribuez.
 - **Données des arrêts (`stops.js`)** : [Open Database License (ODbL) 1.0](http://opendatacommons.org/licenses/odbl/), source Naolib.
+- **Ressources tierces (`vendor/`)** : police Inter et Font Awesome Free, chacune sous sa propre licence (textes fournis dans `vendor/`).
 
 ## Documentation technique
 
 ### Fichiers
 
 - `MES_ARRETS_NANTES.html` — l'application : CSS dans `<style>`, balisage, puis un `<script>` inline avec toute la logique.
-- `stops.js` — données embarquées des arrêts (`STOP_LIST`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Les deux fichiers doivent rester dans le même dossier.
+- `stops.js` — données embarquées des arrêts (`STOP_LIST`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Il doit rester dans le même dossier que le HTML.
+- `vendor/` — police Inter (variable, sous-ensemble latin) et Font Awesome Free 6 (style solid uniquement), copiés depuis leurs paquets npm officiels avec leurs licences ; versions et procédure de mise à jour dans `vendor/README.md`.
 - `icons/` — `favicon.svg` est la source de l'icône de l'onglet (un bus vu de face avec des ondes « temps réel », aux couleurs de l'appli) ; `apple-touch-icon.png` (180 px, sans coins arrondis) est le seul fichier référencé par la page. L'icône d'onglet elle-même est **embarquée dans le `<head>`** en data URI (SVG + PNG 32 px de repli), donc la page l'affiche même copiée seule. Pour la modifier : éditer `icons/favicon.svg`, puis réencoder les deux data URI du `<head>` (SVG minifié et percent-encodé, PNG 32 px en base64) et régénérer `apple-touch-icon.png`.
 
-Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Les textes de l'interface, les commentaires et les messages de commit sont en français ; garder cette convention. Les données live demandent l'accès réseau à `api.okina.fr` et une réponse CORS autorisée par le navigateur ; les polices Google et Font Awesome 6 viennent de CDN. Pour vérifier un changement, charger la page (Playwright/Chromium convient pour des vérifications scriptées, en simulant l'API avec `page.route`).
+Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Les textes de l'interface, les commentaires et les messages de commit sont en français ; garder cette convention. Les données live demandent l'accès réseau à `api.okina.fr` et une réponse CORS autorisée par le navigateur ; aucune ressource n'est chargée depuis un CDN. Pour vérifier un changement, charger la page (Playwright/Chromium convient pour des vérifications scriptées, en simulant l'API avec `page.route`).
 
 ### Source de données : SIRI (Okina)
 
