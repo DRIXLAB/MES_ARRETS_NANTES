@@ -2,6 +2,8 @@
 
 Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de transport en commun de Nantes (TAN / Naolib). On choisit ses arrêts, et la page affiche en continu les prochains passages, sans compte ni installation.
 
+*Imaginé à Nantes par DrixLab - Développé par Claude dans les nuages*
+
 > Projet indépendant, **non affilié** à Naolib, à la TAN ni à Nantes Métropole. Les noms de réseau et d'arrêts appartiennent à leurs propriétaires respectifs.
 
 ![Aperçu du tableau de bord : horloge et calendrier, puis trois arrêts avec leurs prochains passages, un retard et un passage supprimé](docs/apercu.png)
