@@ -2,7 +2,7 @@
 
 // Lignes du réseau Naolib et lignes desservant chaque arrêt, extraites du GTFS « Réseau urbain Naolib »
 // (Nantes Métropole, via transport.data.gouv.fr). Généré par tools/generate_lines.py : ne pas modifier à la main.
-// Données de 2026-11-18. Voir le README pour la licence des données.
+// Données du 2026-11-18, sous Licence Ouverte 2.0 (source : Nantes Métropole, Réseau urbain Naolib).
 // LINE_INFO : code de ligne (celui de l'API temps réel) -> couleur, couleur du texte, nom, ordre d'affichage.
 const LINE_INFO = {
 "1":{"c":"007a45","t":"ffffff","n":"François Mitterrand / Jamet - Beaujoire / Babinière","o":1},
@@ -1197,9 +1197,12 @@ const STOP_LINES = {
 1149:["66","86","E5"],
 1150:["71"],
 1151:["TE1"],
+1152:["TE1"],
 1153:["TE1"],
 1154:["36","TE1"],
 1155:["TE2"],
 1156:["TE2"],
 1158:["N1","N2"],
+1162:["26"],
+1163:["CNO"],
 };

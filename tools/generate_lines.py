@@ -106,7 +106,7 @@ def main():
         f.write("'use strict';\n\n")
         f.write('// Lignes du réseau Naolib et lignes desservant chaque arrêt, extraites du GTFS « Réseau urbain Naolib »\n')
         f.write('// (Nantes Métropole, via transport.data.gouv.fr). Généré par tools/generate_lines.py : ne pas modifier à la main.\n')
-        f.write(f'// Données de {date.today().isoformat()}. Voir le README pour la licence des données.\n')
+        f.write(f'// Données du {date.today().isoformat()}, sous Licence Ouverte 2.0 (source : Nantes Métropole, Réseau urbain Naolib).\n')
         f.write('// LINE_INFO : code de ligne (celui de l\'API temps réel) -> couleur, couleur du texte, nom, ordre d\'affichage.\n')
         f.write('const LINE_INFO = {\n')
         for c in used:

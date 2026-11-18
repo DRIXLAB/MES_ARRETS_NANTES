@@ -26,8 +26,7 @@ En local : télécharger le dépôt et ouvrir `MES_ARRETS_NANTES.html` dans un n
 
 ## Données et crédits
 
-- **Arrêts** : liste Naolib extraite du référentiel NeTEx (open data), embarquée dans `stops.js`. Ces données sont publiées sous [Open Database License (ODbL)](http://opendatacommons.org/licenses/odbl/) : `stops.js` en est un extrait et reste soumis à cette licence (attribution et partage dans les mêmes conditions).
-- **Lignes de chaque arrêt, noms et couleurs des lignes** : extraits du GTFS « Réseau urbain Naolib » (Nantes Métropole, diffusé sur [transport.data.gouv.fr](https://transport.data.gouv.fr/datasets/reseau-de-transports-collectifs-naolib)), dans `lines.js`.
+- **Arrêts, lignes de chaque arrêt, noms et couleurs des lignes** : extraits du GTFS « Réseau urbain Naolib » (Nantes Métropole), diffusé sur [transport.data.gouv.fr](https://transport.data.gouv.fr/datasets/reseau-de-transports-collectifs-naolib), dans `stops.js` et `lines.js`. Source : Nantes Métropole, *Réseau urbain Naolib* — GTFS ; données du 18 novembre 2026. Ces données sont publiées sous [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/).
 - **Passages en temps réel** : API SIRI (StopMonitoring) exposée par la passerelle Okina pour le réseau Naolib.
 - **Police** [Inter](https://rsms.me/inter/) (licence SIL OFL 1.1) et **icônes** [Font Awesome Free](https://fontawesome.com/) 6 (icônes CC BY 4.0, polices SIL OFL 1.1, code MIT), hébergées dans `vendor/` avec leurs licences.
 
@@ -43,7 +42,7 @@ L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audienc
 ## Licence
 
 - **Code de l'application** : [GNU GPL v3](LICENSE). Vous pouvez l'utiliser, l'étudier, le modifier et le redistribuer, à condition de conserver la même licence pour les versions modifiées que vous distribuez.
-- **Données des arrêts (`stops.js`) et des lignes (`lines.js`)** : [Open Database License (ODbL) 1.0](http://opendatacommons.org/licenses/odbl/), source Naolib / Nantes Métropole.
+- **Données des arrêts (`stops.js`) et des lignes (`lines.js`)** : [Licence Ouverte 2.0](https://www.etalab.gouv.fr/licence-ouverte-open-licence/) (Etalab). Pour les réutiliser, il faut mentionner la source (Nantes Métropole, *Réseau urbain Naolib*) et la date de mise à jour des données.
 - **Ressources tierces (`vendor/`)** : police Inter et Font Awesome Free, chacune sous sa propre licence (textes fournis dans `vendor/`).
 
 ## Documentation technique
@@ -52,11 +51,13 @@ L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audienc
 
 - `MES_ARRETS_NANTES.html` — l'application : CSS dans `<style>`, balisage, puis un `<script>` inline avec toute la logique.
 - `index.html` — simple redirection vers `MES_ARRETS_NANTES.html`, pour que GitHub Pages serve l'application à la racine du site ; `.nojekyll` désactive le traitement Jekyll de Pages.
-- `stops.js` — données embarquées des arrêts (`STOP_LIST`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Il doit rester dans le même dossier que le HTML.
+- `stops.js` — données embarquées des arrêts (`STOP_LIST`, **généré** par `tools/generate_stops.py`), chargées par une balise `<script src="stops.js">` **avant** le script principal. Il doit rester dans le même dossier que le HTML.
 - `vendor/` — police Inter (variable, sous-ensemble latin) et Font Awesome Free 6 (style solid uniquement), copiés depuis leurs paquets npm officiels avec leurs licences ; versions et procédure de mise à jour dans `vendor/README.md`.
 - `docs/apercu.png` — capture d'écran du README (données d'exemple, non issues de l'API) ; à régénérer si l'interface change nettement.
 - `lines.js` — lignes du réseau (couleur officielle, nom, ordre) et lignes qui desservent chaque arrêt (`LINE_INFO`, `STOP_LINES`), chargé juste après `stops.js`. **Fichier généré** : ne pas le modifier à la main. La page fonctionne aussi sans lui (couleurs calculées, pas de lignes dans la liste).
-- `tools/generate_lines.py` — régénère `lines.js` depuis le GTFS Naolib (bibliothèque standard Python seulement) : `python3 tools/generate_lines.py gtfs.zip stops.js lines.js`. Le GTFS se télécharge sur la page du jeu de données ci-dessus.
+- `tools/` — scripts de mise à jour des données, à lancer dans cet ordre avec le GTFS Naolib téléchargé sur la page du jeu de données ci-dessus (bibliothèque standard Python seulement) :
+  1. `python3 tools/generate_stops.py gtfs.zip stops.js` met à jour `stops.js` ; il **fusionne** le GTFS avec la liste existante sans rien retirer (les numéros de quai changent d'une version à l'autre et l'API temps réel n'est pas interrogeable hors du navigateur) ;
+  2. `python3 tools/generate_lines.py gtfs.zip stops.js lines.js` régénère `lines.js`.
 - `icons/` — `favicon.svg` est la source de l'icône de l'onglet (un bus vu de face avec des ondes « temps réel », aux couleurs de l'appli) ; `apple-touch-icon.png` (180 px, sans coins arrondis) est le seul fichier référencé par la page. L'icône d'onglet elle-même est **embarquée dans le `<head>`** en data URI (SVG + PNG 32 px de repli), donc la page l'affiche même copiée seule. Pour la modifier : éditer `icons/favicon.svg`, puis réencoder les deux data URI du `<head>` (SVG minifié et percent-encodé, PNG 32 px en base64) et régénérer `apple-touch-icon.png`.
 
 Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Côté CSS : le dégradé de texte de l'en-tête de carte ne s'applique qu'au titre (`.widget-header .title`), car `-webkit-text-fill-color: transparent` est hérité et rendait invisible le libellé du bouton « Filtrer » ouvert ; pas de `backdrop-filter` (coût GPU sans effet visible sur ce fond) ; `prefers-reduced-motion` est respecté. Les textes de l'interface, les commentaires et les messages de commit sont en français ; garder cette convention. Les données live demandent l'accès réseau à `api.okina.fr` et une réponse CORS autorisée par le navigateur ; aucune ressource n'est chargée depuis un CDN. Pour vérifier un changement, charger la page (Playwright/Chromium convient pour des vérifications scriptées, en simulant l'API avec `page.route`).
