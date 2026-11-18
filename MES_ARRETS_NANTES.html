@@ -339,9 +339,9 @@
 
         .stop-item {
             content-visibility: auto;
-            contain-intrinsic-size: auto 44px;
+            contain-intrinsic-size: auto 72px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 10px;
             padding: 10px;
             background: var(--widget-bg);
@@ -359,6 +359,8 @@
         .stop-item input[type="checkbox"] {
             width: 18px;
             height: 18px;
+            margin-top: 1px;
+            flex-shrink: 0;
             cursor: pointer;
             accent-color: var(--accent-color);
         }
@@ -367,6 +369,15 @@
             cursor: pointer;
             flex: 1;
             font-size: 0.9em;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .stop-lines {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
         }
 
         .stop-item .stop-suffix {
@@ -740,15 +751,6 @@
             border-left-width: 3px;
         }
 
-        .line-mini-badge {
-            display: inline-block;
-            padding: 1px 6px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 0.75em;
-            line-height: 1.5;
-        }
-
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -788,14 +790,31 @@
             color: var(--accent-color);
         }
 
+        /* Pastille de ligne : couleur et texte viennent de lines.js (couleurs officielles) */
         .line-badge {
             display: inline-block;
+            min-width: 2.2em;
             padding: 3px 10px;
             border-radius: 12px;
             font-weight: 700;
             font-size: 0.9em;
             letter-spacing: 0.3px;
+            line-height: 1.4;
+            text-align: center;
             white-space: nowrap;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.28); /* garde lisibles les couleurs sombres sur le fond sombre */
+        }
+
+        .line-badge.is-small {
+            min-width: 0;
+            padding: 1px 6px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            line-height: 1.5;
+        }
+
+        .line-badge.is-match {
+            box-shadow: 0 0 0 2px var(--accent-color);
         }
 
         .loading, .error {
@@ -1004,12 +1023,12 @@
         <section class="config-section hidden" id="stopSelector" aria-labelledby="configTitle">
             <h2 class="sr-only" id="configTitle">Configuration des arrêts</h2>
             <div class="search-container">
-                <label for="searchInput" class="sr-only">Rechercher un arrêt</label>
+                <label for="searchInput" class="sr-only">Rechercher un arrêt ou une ligne</label>
                 <input type="search"
                        class="search-input"
                        id="searchInput"
                        autocomplete="off"
-                       placeholder="Rechercher un arrêt...">
+                       placeholder="Rechercher un arrêt ou une ligne (ex. : Commerce, 4, C2)...">
             </div>
             <div id="stopList" class="stop-selector"></div>
             <div class="storage-info">
@@ -1026,11 +1045,16 @@
     </main>
 
     <script src="stops.js"></script>
+    <script src="lines.js"></script>
     <script>
         'use strict';
 
         // STOP_LIST (données Naolib) est défini dans stops.js
         // Format : [nom, StopPlaceId, [quayIds...]]
+        // LINE_INFO et STOP_LINES (lignes, couleurs, lignes de chaque arrêt) sont définis dans lines.js,
+        // généré par tools/generate_lines.py ; la page fonctionne aussi sans ce fichier.
+        const LINE_DATA = typeof LINE_INFO !== 'undefined' ? LINE_INFO : {};
+        const STOP_LINE_DATA = typeof STOP_LINES !== 'undefined' ? STOP_LINES : {};
 
         // Tables de lookup construites au démarrage
         const STOP_MAP = {};       // { placeId: { name, quays } }
@@ -1060,6 +1084,9 @@
             SEARCH_DEBOUNCE_MS: 120,   // délai de saisie avant de filtrer la liste d'arrêts
             MAX_ROWS: 10,              // passages affichés par arrêt
             MIN_DELAY_DISPLAYED: 2,    // retard (min) à partir duquel on l'affiche
+            // true : couleurs officielles Naolib (28 couleurs partagées par groupes de lignes) ;
+            // false : une couleur distincte par ligne (calculée, sans rapport avec la signalétique)
+            OFFICIAL_LINE_COLORS: true,
             SIRI_ENDPOINT: 'https://api.okina.fr/gateway/sem/realtime/anshar/services',
             LOCALE: 'fr-FR',
             TIMEZONE: 'Europe/Paris',
@@ -1141,6 +1168,11 @@
             }
         };
 
+        // Rang de chaque ligne dans l'ordre du réseau (sert à la couleur distincte par ligne)
+        const LINE_RANK = new Map(Object.keys(LINE_DATA)
+            .sort((a, b) => (LINE_DATA[a].o - LINE_DATA[b].o) || a.localeCompare(b, 'fr', { numeric: true }))
+            .map((code, index) => [code, index]));
+
         // Formateurs créés une seule fois (leur création est coûteuse)
         const PARIS_TIME = new Intl.DateTimeFormat(CONFIG.LOCALE, {
             hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: CONFIG.TIMEZONE
@@ -1199,6 +1231,39 @@
 
             compareNatural(a, b) {
                 return String(a).localeCompare(String(b), CONFIG.LOCALE, { numeric: true });
+            },
+
+            // Ordre des lignes : celui du réseau (1, 1B, 2, 3, 4...), puis ordre naturel
+            compareLines(a, b) {
+                const order = (code) => LINE_DATA[code]?.o ?? 9999;
+                return order(a) - order(b) || Utils.compareNatural(a, b);
+            },
+
+            // Couleurs d'une ligne { bg, fg }. Les teintes sont espacées de l'angle d'or (137,5°) :
+            // des lignes aux numéros voisins (1, 2, 3...) obtiennent des couleurs bien différentes.
+            lineColors(line) {
+                const info = LINE_DATA[line];
+                if (CONFIG.OFFICIAL_LINE_COLORS && info && /^[0-9a-f]{6}$/i.test(info.c)) {
+                    const fg = /^[0-9a-f]{6}$/i.test(info.t) ? info.t : 'ffffff';
+                    return { bg: `#${info.c}`, fg: `#${fg}` };
+                }
+                const rank = LINE_RANK.get(line);
+                if (rank !== undefined) {
+                    // une couleur distincte par ligne connue ; trois niveaux de clarté pour séparer les voisines
+                    const lightness = [40, 52, 33][rank % 3];
+                    return { bg: `hsl(${Math.round((rank * 137.508) % 360)}, 70%, ${lightness}%)`, fg: '#ffffff' };
+                }
+                // ligne inconnue (absente de lines.js) : teinte déduite du code
+                let hash = 2166136261;
+                for (let i = 0; i < line.length; i++) hash = Math.imul(hash ^ line.charCodeAt(i), 16777619);
+                return { bg: `hsl(${(hash >>> 0) % 360}, 65%, 38%)`, fg: '#ffffff' };
+            },
+
+            // Pastille HTML d'une ligne (le nom complet de la ligne s'affiche au survol)
+            lineBadge(line, extraClass = '') {
+                const { bg, fg } = Utils.lineColors(line);
+                const name = LINE_DATA[line]?.n;
+                return `<span class="line-badge ${extraClass}" style="background: ${bg}; color: ${fg};"${name ? ` title="${Utils.escapeHtml(name)}"` : ''}>${Utils.escapeHtml(line)}</span>`;
             }
         };
 
@@ -1261,13 +1326,18 @@
                 this.searchTimer = null;
                 // Liste des arrêts issue des données embarquées (pas d'API), triée une seule fois
                 AppState.availableStops = STOP_LIST
-                    .map(([name, placeId, quays]) => ({
-                        codeLieu: String(placeId),
-                        libelle: name,
-                        quays,
-                        duplicate: NAME_COUNT.get(name) > 1,
-                        search: Utils.normalize(name)
-                    }))
+                    .map(([name, placeId, quays]) => {
+                        const lines = STOP_LINE_DATA[placeId] || [];
+                        return {
+                            codeLieu: String(placeId),
+                            libelle: name,
+                            quays,
+                            duplicate: NAME_COUNT.get(name) > 1,
+                            search: Utils.normalize(name),
+                            lines,                                          // lignes qui desservent l'arrêt
+                            lineKeys: new Set(lines.map(code => Utils.normalize(code)))
+                        };
+                    })
                     .sort((a, b) => a.libelle.toLowerCase().localeCompare(b.libelle.toLowerCase(), CONFIG.LOCALE));
                 this.renderStopSelector();
                 this.setupEventListeners();
@@ -1285,23 +1355,43 @@
                 }
 
                 const selected = new Set(AppState.selectedStops);
+                const { lineKeys: searched } = this.parseQuery(AppState.searchQuery);
                 container.innerHTML = stops.map(stop => `
                     <div class="stop-item">
                         <input type="checkbox"
                                id="stop-${stop.codeLieu}"
                                value="${stop.codeLieu}"
                                ${selected.has(stop.codeLieu) ? 'checked' : ''}>
-                        <label for="stop-${stop.codeLieu}">${Utils.escapeHtml(stop.libelle)}${stop.duplicate ? ` <span class="stop-suffix">n° ${stop.codeLieu}</span>` : ''}</label>
+                        <label for="stop-${stop.codeLieu}">
+                            <span>${Utils.escapeHtml(stop.libelle)}${stop.duplicate ? ` <span class="stop-suffix">n° ${stop.codeLieu}</span>` : ''}</span>
+                            ${stop.lines.length ? `<span class="stop-lines" aria-label="Lignes : ${Utils.escapeHtml(stop.lines.join(', '))}">${
+                                stop.lines.map(code => Utils.lineBadge(code, `is-small${searched.has(Utils.normalize(code)) ? ' is-match' : ''}`)).join('')
+                            }</span>` : ''}
+                        </label>
                     </div>
                 `).join('');
             }
 
-            // Arrêts correspondant à la recherche (sans accents ni casse), sélectionnés en premier
+            // Analyse de la recherche (sans accents ni casse) :
+            //   « Commerce »   -> arrêts dont le nom contient le texte, ou desservis par la ligne « commerce »
+            //   « 4 », « C2 »  -> arrêts desservis par cette ligne (code exact), en plus des noms qui le contiennent
+            //   « ligne 1 c2 » -> arrêts desservis par TOUTES les lignes indiquées (correspondances)
+            parseQuery(raw) {
+                const text = Utils.normalize(raw);
+                const explicit = /^lignes?\s+(.+)$/.exec(text);
+                if (explicit) return { text, lineOnly: true, lineKeys: new Set(explicit[1].split(' ')) };
+                return { text, lineOnly: false, lineKeys: new Set(text ? [text] : []) };
+            }
+
+            // Arrêts correspondant à la recherche, sélectionnés en premier
             filterStops() {
-                const query = Utils.normalize(AppState.searchQuery);
-                const matching = query
-                    ? AppState.availableStops.filter(stop => stop.search.includes(query))
-                    : AppState.availableStops;
+                const { text, lineOnly, lineKeys } = this.parseQuery(AppState.searchQuery);
+                let matching = AppState.availableStops;
+                if (text) {
+                    matching = matching.filter(stop => lineOnly
+                        ? [...lineKeys].every(key => stop.lineKeys.has(key))
+                        : stop.search.includes(text) || stop.lineKeys.has(text));
+                }
                 const selected = new Set(AppState.selectedStops);
                 return [
                     ...matching.filter(stop => selected.has(stop.codeLieu)),
@@ -1804,11 +1894,10 @@
                 if (linesContainer) {
                     linesContainer.innerHTML = lines.size === 0
                         ? '<div class="filter-empty">Aucune ligne pour le moment</div>'
-                        : Array.from(lines).sort(Utils.compareNatural).map(line => {
+                        : Array.from(lines).sort(Utils.compareLines).map(line => {
                             const isFiltered = filters.hiddenLines.includes(line);
-                            const hue = this.getLineHue(line);
                             const safe = Utils.escapeHtml(line);
-                            return `<div class="filter-tag line-tag ${isFiltered ? 'filtered' : ''}" style="border-left-color: hsl(${hue}, 85%, 55%);" role="button" tabindex="0" aria-label="${isFiltered ? 'Afficher' : 'Masquer'} la ligne ${safe}" data-type="line" data-stop="${stopCode}" data-value="${safe}">${isFiltered ? '<i class="fas fa-eye-slash" aria-hidden="true"></i>' : '<i class="fas fa-eye" aria-hidden="true"></i>'}<span style="${isFiltered ? '' : `color: hsl(${hue}, 85%, 65%); font-weight: 700;`}">${safe}</span></div>`;
+                            return `<div class="filter-tag line-tag ${isFiltered ? 'filtered' : ''}" style="border-left-color: ${Utils.lineColors(line).bg};" role="button" tabindex="0" aria-label="${isFiltered ? 'Afficher' : 'Masquer'} la ligne ${safe}" data-type="line" data-stop="${stopCode}" data-value="${safe}">${isFiltered ? '<i class="fas fa-eye-slash" aria-hidden="true"></i>' : '<i class="fas fa-eye" aria-hidden="true"></i>'}${Utils.lineBadge(line, 'is-small')}</div>`;
                         }).join('');
                 }
 
@@ -1821,10 +1910,8 @@
                             const isAutoFiltered = autoHiddenDestinations.has(dest) && !isManuallyFiltered;
                             const isFiltered = isManuallyFiltered || isAutoFiltered;
                             const safe = Utils.escapeHtml(dest);
-                            const lineBadges = Array.from(destToLines[dest] || []).sort(Utils.compareNatural).map(line => {
-                                const hue = this.getLineHue(line);
-                                return `<span class="line-mini-badge" style="background: hsla(${hue}, 85%, 55%, 0.2); color: hsl(${hue}, 85%, 65%);">${Utils.escapeHtml(line)}</span>`;
-                            }).join('');
+                            const lineBadges = Array.from(destToLines[dest] || []).sort(Utils.compareLines)
+                                .map(line => Utils.lineBadge(line, 'is-small')).join('');
                             const a11y = isAutoFiltered
                                 ? 'aria-disabled="true" title="Masqué automatiquement (ligne filtrée)"'
                                 : `role="button" tabindex="0" aria-label="${isFiltered ? 'Afficher' : 'Masquer'} la destination ${safe}"`;
@@ -2044,14 +2131,13 @@
 
                 const rows = filteredData.map(bus => {
                     const ligne = this.getLigne(bus);
-                    const hue = this.getLineHue(ligne);
                     const delay = this.getDelayMin(bus);
                     const timeHtml = bus.cancelled
                         ? '<span class="status-cancelled">Supprimé</span>'
                         : `${Utils.escapeHtml(this.getTemps(bus))}${delay >= CONFIG.MIN_DELAY_DISPLAYED ? ` <span class="delay" title="Retard par rapport à l'horaire théorique">+${delay} min</span>` : ''}`;
                     return `
                         <tr class="${bus.cancelled ? 'cancelled' : ''}">
-                            <td><span class="line-badge" style="background: hsla(${hue}, 85%, 55%, 0.18); color: hsl(${hue}, 85%, 65%); border: 1px solid hsla(${hue}, 85%, 55%, 0.4);">${Utils.escapeHtml(ligne)}</span></td>
+                            <td>${Utils.lineBadge(ligne)}</td>
                             <td class="direction-cell">${Utils.escapeHtml(this.getTerminus(bus))}</td>
                             <td>${timeHtml}</td>
                         </tr>
@@ -2070,14 +2156,6 @@
                         <tbody>${rows}</tbody>
                     </table>
                 `);
-            }
-
-            getLineHue(ligne) {
-                let hash = 0;
-                for (let i = 0; i < ligne.length; i++) {
-                    hash = ligne.charCodeAt(i) + ((hash << 5) - hash);
-                }
-                return Math.abs(hash) % 360;
             }
 
             getLigne(bus) {
