@@ -6,7 +6,7 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 
 > Projet indépendant, **non affilié** à Naolib, à la TAN ni à Nantes Métropole. Les noms de réseau et d'arrêts appartiennent à leurs propriétaires respectifs.
 
-![Aperçu du tableau de bord : horloge et calendrier, puis trois arrêts avec leurs prochains passages, un retard et un passage supprimé](docs/apercu.png)
+![Aperçu du tableau de bord : horloge et calendrier, boutons « Info trafic » et « Configurer », puis trois arrêts avec leurs prochains passages, un retard et un passage supprimé](docs/apercu.png)
 
 *Aperçu de l'application. Les horaires affichés sont des données d'exemple.*
 
