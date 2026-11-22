@@ -12,6 +12,7 @@ Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter.
 - Mettre à jour les données depuis le GTFS Naolib (transport.data.gouv.fr), **dans cet ordre** :
   1. `python3 tools/generate_stops.py gtfs.zip stops.js` (fusionne, ne retire jamais d'arrêt ni de quai)
   2. `python3 tools/generate_lines.py gtfs.zip stops.js lines.js`
+- Régénérer la capture du README (`docs/apercu.png`) après un changement visible de l'interface : `node tools/capture_apercu.js` (Playwright, données d'exemple, API simulée).
 - Vérifier un changement : charger la page avec Playwright/Chromium en simulant l'API via `page.route('https://api.okina.fr/**', …)` (réponse XML SIRI StopMonitoring), sans interroger la vraie API en boucle.
 
 ## Architecture en bref
