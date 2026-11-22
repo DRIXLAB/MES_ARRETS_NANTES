@@ -285,6 +285,312 @@
             box-shadow: 0 8px 24px rgba(0, 245, 255, 0.4);
         }
 
+        /* Info trafic : bouton de la barre d'outils et fenêtre (SIRI Situation Exchange, chargé au clic) */
+        .toolbar {
+            flex-wrap: wrap;
+        }
+
+        .traffic-button {
+            background: rgba(255, 180, 84, 0.1);
+            border: 1px solid rgba(255, 180, 84, 0.45);
+            color: #ffb454;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85em;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        .traffic-button:hover {
+            background: rgba(255, 180, 84, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .traffic-dialog {
+            width: calc(100% - 32px);
+            max-width: 760px;
+            max-height: 85vh;
+            margin: auto;
+            padding: 0;
+            background: #161a33;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            font-family: inherit;
+            line-height: 1.5;
+        }
+
+        .traffic-dialog[open] {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .traffic-dialog::backdrop {
+            background: rgba(5, 5, 20, 0.7);
+        }
+
+        .traffic-head {
+            padding: 16px 20px 12px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .traffic-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .traffic-title-row h2 {
+            font-size: 1.15em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .traffic-title-row h2 i {
+            color: #ffb454;
+        }
+
+        .traffic-close {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            flex-shrink: 0;
+        }
+
+        .traffic-close:hover {
+            color: var(--text-color);
+            background: var(--widget-hover);
+        }
+
+        .traffic-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+
+        .traffic-scope {
+            display: inline-flex;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .traffic-scope button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            font-size: 0.85em;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .traffic-scope button[aria-pressed="true"] {
+            background: var(--hover-bg);
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        .traffic-refresh {
+            background: rgba(0, 245, 255, 0.07);
+            border: 1px solid rgba(0, 245, 255, 0.35);
+            color: var(--accent-color);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-family: inherit;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .traffic-refresh:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .traffic-refresh.fetching i {
+            animation: spin 0.8s linear infinite;
+        }
+
+        .traffic-status {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            min-height: 1.5em;
+        }
+
+        .traffic-status.is-error {
+            color: var(--accent-secondary);
+        }
+
+        .traffic-body {
+            padding: 12px 20px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .traffic-empty {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            font-style: italic;
+            padding: 12px 0;
+        }
+
+        .traffic-group h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85em;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .traffic-group h3 .line-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .traffic-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .traffic-item {
+            background: var(--widget-bg);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid #ffb454;
+            border-radius: 8px;
+        }
+
+        .traffic-item.is-upcoming {
+            border-left-color: var(--text-secondary);
+        }
+
+        .traffic-item summary,
+        .traffic-item .traffic-item-head {
+            display: block;
+            padding: 10px 14px;
+            list-style: none;
+        }
+
+        .traffic-item summary {
+            cursor: pointer;
+            position: relative;
+            padding-right: 36px;
+        }
+
+        /* Chevron de dépliage, toujours en haut à droite */
+        .traffic-item summary::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            font-size: 0.7em;
+            color: var(--text-secondary);
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            transition: var(--transition);
+        }
+
+        .traffic-item[open] summary::after {
+            transform: rotate(180deg);
+        }
+
+        .traffic-item summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .traffic-item summary:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+            border-radius: 8px;
+        }
+
+        .traffic-item-title {
+            font-weight: 600;
+            font-size: 0.92em;
+        }
+
+        .traffic-item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 4px 10px;
+            margin-top: 4px;
+            font-size: 0.78em;
+            color: var(--text-secondary);
+        }
+
+        .traffic-tag {
+            border-radius: 6px;
+            padding: 0 6px;
+            font-weight: 600;
+            font-size: 0.95em;
+            background: rgba(255, 180, 84, 0.15);
+            color: #ffb454;
+        }
+
+        .traffic-tag.is-upcoming {
+            background: var(--widget-hover);
+            color: var(--text-secondary);
+        }
+
+        .traffic-tag.is-unplanned {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--accent-secondary);
+        }
+
+        .traffic-detail {
+            padding: 0 14px 12px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .traffic-detail strong {
+            color: var(--text-color);
+        }
+
+        .traffic-detail ul, .traffic-detail ol {
+            padding-left: 1.3em;
+        }
+
+        .traffic-calm {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+
         .search-container {
             margin-bottom: 16px;
         }
@@ -973,6 +1279,24 @@
                 margin: 0;
                 font-size: 1em;
             }
+
+            /* Info trafic en plein écran sur mobile */
+            .traffic-dialog {
+                width: 100%;
+                max-width: none;
+                height: 100%;
+                max-height: none;
+                border-radius: 0;
+                border: none;
+            }
+
+            .traffic-head {
+                padding: 12px 16px 10px;
+            }
+
+            .traffic-body {
+                padding: 12px 16px 16px;
+            }
         }
     </style>
 </head>
@@ -1009,6 +1333,9 @@
 
     <main class="main-container">
         <div class="toolbar">
+            <button class="traffic-button" id="trafficBtn" type="button" aria-haspopup="dialog" aria-controls="trafficDialog">
+                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Info trafic
+            </button>
             <button class="config-button" id="toggleConfig" type="button" aria-expanded="false" aria-controls="stopSelector">
                 <i class="fas fa-chevron-down" aria-hidden="true"></i> Configurer
             </button>
@@ -1043,6 +1370,31 @@
 
         <section id="transportGrid" class="transport-grid"></section>
     </main>
+
+    <!-- Info trafic : chargé uniquement à la demande (bouton « Info trafic » ou « Actualiser ») -->
+    <dialog class="traffic-dialog" id="trafficDialog" aria-labelledby="trafficTitle">
+        <div class="traffic-head">
+            <div class="traffic-title-row">
+                <h2 id="trafficTitle"><i class="fas fa-triangle-exclamation" aria-hidden="true"></i> Info trafic</h2>
+                <button class="traffic-close" id="trafficClose" type="button" aria-label="Fermer l'info trafic">
+                    <i class="fas fa-xmark" aria-hidden="true"></i>
+                </button>
+            </div>
+            <div class="traffic-controls">
+                <div class="traffic-scope" role="group" aria-label="Perturbations affichées">
+                    <button type="button" data-scope="mine" aria-pressed="true">Mes lignes</button>
+                    <button type="button" data-scope="all" aria-pressed="false">Tout le réseau</button>
+                </div>
+                <button class="traffic-refresh" id="trafficRefresh" type="button">
+                    <i class="fas fa-sync-alt" aria-hidden="true"></i> Actualiser
+                </button>
+            </div>
+            <!-- Le décompte change chaque seconde : seules les fins de chargement sont annoncées (trafficAnnounce) -->
+            <div class="traffic-status" id="trafficStatus"></div>
+            <div class="sr-only" id="trafficAnnounce" role="status" aria-live="polite"></div>
+        </div>
+        <div class="traffic-body" id="trafficBody"></div>
+    </dialog>
 
     <script src="stops.js"></script>
     <script src="lines.js"></script>
@@ -1182,6 +1534,10 @@
         });
         const PARIS_DATE = new Intl.DateTimeFormat('en-US', {
             year: 'numeric', month: 'numeric', day: 'numeric', timeZone: CONFIG.TIMEZONE
+        });
+        // Dates des perturbations : « lun. 23 nov., 21:00 »
+        const PARIS_DAY_TIME = new Intl.DateTimeFormat(CONFIG.LOCALE, {
+            weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: CONFIG.TIMEZONE
         });
 
         const Utils = {
@@ -1470,6 +1826,10 @@
                 this.lastFetchTime = Number.isFinite(last) && last > 0 && last <= Date.now() ? last : 0;
                 this.lastFailed = false;
                 this.fetchInProgress = false;
+                // Info trafic demandée : elle prend le prochain créneau de 30 s à la place des passages
+                this.traffic = null;             // TrafficManager (branché par DashboardApp)
+                this.trafficPending = false;
+                this.trafficFetching = false;
                 this.countdownInterval = null;
                 this.displayInterval = null;
                 this.openFilterStop = null;      // arrêt dont le panneau de filtres est ouvert
@@ -1636,6 +1996,66 @@
                 return Math.max(0, CONFIG.FETCH_COOLDOWN_S - elapsed);
             }
 
+            // Requête du créneau, appelée par le décompte : l'info trafic demandée passe avant les
+            // passages, qui attendent le créneau suivant. Jamais plus d'une requête par créneau.
+            runScheduledRequest() {
+                if (this.fetchInProgress) return;
+                if (Date.now() - this.lastFetchTime < (CONFIG.FETCH_COOLDOWN_S - 1) * 1000) return;
+                if (this.trafficPending && this.traffic) this.loadTraffic();
+                else this.loadAllStopsData();
+            }
+
+            // Demande l'info trafic pour le prochain créneau (bouton « Info trafic » / « Actualiser »)
+            requestTraffic() {
+                if (this.trafficPending || this.trafficFetching) return;
+                this.trafficPending = true;
+                // Sans arrêt sélectionné, le décompte est arrêté : on le relance pour ce créneau
+                this.startCountdown();
+            }
+
+            cancelTraffic() {
+                this.trafficPending = false;
+            }
+
+            async loadTraffic() {
+                this.trafficPending = false;
+                this.trafficFetching = true;
+                this.fetchInProgress = true;
+                const btn = document.getElementById('refreshBtn');
+                const label = document.getElementById('refreshLabel');
+                if (btn) { btn.classList.remove('ready'); btn.classList.add('fetching'); btn.disabled = true; }
+                if (label) label.textContent = 'Info trafic...';
+                this.traffic.refreshStatus();
+
+                try {
+                    const { ok, status, text } = await Utils.fetchText(CONFIG.SIRI_ENDPOINT, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: this.traffic.buildRequest()
+                    }, 20000);
+                    this.lastFetchTime = Date.now();
+                    if (status === 429) {
+                        this.traffic.handleError('Trop de requêtes vers l\'API : réessayez dans 30 secondes.');
+                    } else {
+                        if (!ok) throw new Error(`HTTP ${status}`);
+                        this.traffic.handleResponse(text);
+                    }
+                } catch (error) {
+                    this.lastFetchTime = Date.now();
+                    console.error('Erreur info trafic:', error);
+                    this.traffic.handleError('Impossible de charger l\'info trafic. Vérifiez la connexion puis réessayez.');
+                } finally {
+                    this.trafficFetching = false;
+                    this.fetchInProgress = false;
+                    if (btn) btn.classList.remove('fetching');
+                }
+
+                // lastFetchTime a changé : à sauvegarder pour respecter le délai après un rechargement
+                StorageManager.save();
+                this.refreshDisplays();
+                this.startCountdown();
+            }
+
             // `force` : réessai manuel après une erreur (ignore le délai de 30 s)
             async loadAllStopsData(force = false) {
                 if (AppState.selectedStops.length === 0) return;
@@ -1792,7 +2212,7 @@
                         // Onglet masqué : on ne sollicite pas l'API ; la requête part au retour
                         if (document.hidden) return;
                         this.stopCountdown();
-                        this.loadAllStopsData();
+                        this.runScheduledRequest();
                         return;
                     }
                     label.textContent = this.lastFailed ? `Réessai dans ${remaining}s` : `${remaining}s`;
@@ -1813,6 +2233,7 @@
             // Redessine tous les arrêts depuis le cache (appelé chaque seconde)
             refreshDisplays() {
                 if (document.hidden) return;   // inutile sur un onglet masqué ; refait au retour
+                this.traffic?.refreshStatus();  // décompte « Chargement dans Ns » de l'info trafic
                 for (const stopCode of AppState.selectedStops) {
                     const data = this.cachedByStop[stopCode];
                     if (data) this.displayStopData(stopCode, data);
@@ -2214,11 +2635,353 @@
             }
         }
 
+        // Info trafic (SIRI Situation Exchange) : fenêtre ouverte par le bouton « Info trafic ».
+        // Aucune requête automatique : chaque chargement vient d'un clic et passe par le créneau de
+        // 30 s du TransportManager (requestTraffic), qui envoie la requête et rappelle handleResponse.
+        class TrafficManager {
+            // Balises gardées dans les descriptions (HTML fourni par l'API) ; les autres sont réduites à leur texte
+            static ALLOWED_TAGS = new Set(['P', 'STRONG', 'B', 'EM', 'I', 'UL', 'OL', 'LI']);
+            static BLOCK_TAGS = new Set(['P', 'DIV', 'LI', 'UL', 'OL', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'TR']);
+
+            constructor(transport) {
+                this.transport = transport;
+                this.situations = null;   // perturbations lues (null tant que rien n'est chargé)
+                this.fetchedAt = 0;
+                this.error = null;
+                this.scope = 'mine';      // 'mine' : lignes des arrêts choisis ; 'all' : tout le réseau
+                this.counts = { current: 0, upcoming: 0 };
+
+                this.dialog = document.getElementById('trafficDialog');
+                this.body = document.getElementById('trafficBody');
+                this.status = document.getElementById('trafficStatus');
+                this.announcer = document.getElementById('trafficAnnounce');
+                this.refreshButton = document.getElementById('trafficRefresh');
+
+                document.getElementById('trafficBtn')?.addEventListener('click', () => this.open());
+                document.getElementById('trafficClose')?.addEventListener('click', () => this.dialog.close());
+                this.refreshButton?.addEventListener('click', () => this.request());
+                this.dialog?.querySelector('.traffic-scope')?.addEventListener('click', (event) => {
+                    const button = event.target.closest('button[data-scope]');
+                    if (button) this.setScope(button.dataset.scope);
+                });
+                // Clic sur le fond assombri : fermeture
+                this.dialog?.addEventListener('click', (event) => {
+                    if (event.target === this.dialog) this.dialog.close();
+                });
+                // Fenêtre fermée avant le créneau : la requête n'a plus lieu d'être
+                this.dialog?.addEventListener('close', () => this.transport.cancelTraffic());
+            }
+
+            open() {
+                if (!this.dialog) return;
+                this.render();
+                if (!this.dialog.open) this.dialog.showModal();
+                // Premier clic : chargement ; ensuite on réaffiche les infos déjà reçues (« Actualiser » pour recharger)
+                if (!this.situations) this.request();
+                this.refreshStatus();
+            }
+
+            request() {
+                this.transport.requestTraffic();
+                this.refreshStatus();
+            }
+
+            setScope(scope) {
+                this.scope = scope === 'all' ? 'all' : 'mine';
+                this.dialog.querySelectorAll('.traffic-scope button').forEach(button => {
+                    button.setAttribute('aria-pressed', String(button.dataset.scope === this.scope));
+                });
+                this.render();
+                this.refreshStatus();
+            }
+
+            buildRequest() {
+                const ts = new Date().toISOString();
+                return `<?xml version="1.0" encoding="utf-8"?><Siri xmlns="http://www.siri.org.uk/siri" version="2.0"><ServiceRequest><RequestTimestamp>${ts}</RequestTimestamp><RequestorRef>opendata</RequestorRef><SituationExchangeRequest version="2.0"><RequestTimestamp>${ts}</RequestTimestamp><MessageIdentifier>SX-1</MessageIdentifier></SituationExchangeRequest></ServiceRequest></Siri>`;
+            }
+
+            handleResponse(xmlText) {
+                try {
+                    this.situations = this.parseSituations(xmlText);
+                    this.fetchedAt = Date.now();
+                    this.error = null;
+                } catch (error) {
+                    console.error('Info trafic illisible:', error);
+                    this.error = 'Réponse de l\'API illisible. Réessayez plus tard.';
+                }
+                this.render();
+                this.refreshStatus();
+                this.announce(this.error || `Info trafic chargée : ${this.countsLabel()}.`);
+            }
+
+            handleError(message) {
+                this.error = message;
+                this.render();
+                this.refreshStatus();
+                this.announce(message);
+            }
+
+            announce(message) {
+                if (this.announcer) this.announcer.textContent = message;
+            }
+
+            // ---------- Lecture de la réponse SIRI ----------
+
+            parseSituations(xmlText) {
+                const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+                if (doc.getElementsByTagName('parsererror').length > 0) throw new Error('XML illisible');
+                const ns = 'http://www.siri.org.uk/siri';
+                if (doc.getElementsByTagNameNS(ns, 'SituationExchangeDelivery').length === 0) {
+                    throw new Error('Réponse sans SituationExchangeDelivery');
+                }
+                const children = (el, name) => el ? Array.from(el.children).filter(c => c.localName === name) : [];
+                const childText = (el, name) => children(el, name)[0]?.textContent.trim() || '';
+                const all = (el, name) => el ? Array.from(el.getElementsByTagNameNS(ns, name)) : [];
+
+                const situations = [];
+                for (const el of doc.getElementsByTagNameNS(ns, 'PtSituationElement')) {
+                    if (childText(el, 'Progress') === 'closed') continue;
+
+                    // Périodes de validité : une borne absente est ouverte
+                    let periods = children(el, 'ValidityPeriod').map(p => {
+                        const start = Date.parse(childText(p, 'StartTime'));
+                        const end = Date.parse(childText(p, 'EndTime'));
+                        return { start: Number.isFinite(start) ? start : -Infinity, end: Number.isFinite(end) ? end : Infinity };
+                    });
+                    if (periods.length === 0) periods = [{ start: -Infinity, end: Infinity }];
+
+                    // Lignes (même format que StopMonitoring : FR_NAOLIB:Line:<code>:LOC) et arrêts touchés
+                    const affects = children(el, 'Affects')[0];
+                    const lines = [...new Set(all(affects, 'LineRef')
+                        .map(e => e.textContent.trim().replace(/^.*:Line:/, '').replace(/:LOC$/, ''))
+                        .filter(Boolean))];
+                    const places = new Set();
+                    for (const e of all(affects, 'StopPointRef')) {
+                        const quay = /:Quay:(\d+)/.exec(e.textContent)?.[1];
+                        const place = quay ? QUAY_TO_PLACE[Number(quay)] : undefined;
+                        if (place !== undefined) places.add(String(place));
+                    }
+                    for (const e of all(affects, 'StopPlaceRef')) {
+                        const place = /:StopPlace:(\d+)/.exec(e.textContent)?.[1];
+                        if (place) places.add(place);
+                    }
+
+                    // Textes : Summary est parfois vide ; le détail vient de Description ou du texte « SiteWeb »
+                    const actions = all(children(el, 'PublishingActions')[0], 'ActionData');
+                    const web = actions.find(a => childText(a, 'Name') === 'SiteWeb') || actions.find(a => childText(a, 'Prompt'));
+                    const source = childText(el, 'Description') || childText(web, 'Prompt');
+                    const detail = this.cleanHtml(source);
+                    const firstLine = detail.text.split('\n').map(s => s.trim()).find(Boolean) || '';
+                    const title = childText(el, 'Summary') ||
+                        (firstLine.length > 140 ? `${firstLine.slice(0, 139)}…` : firstLine);
+                    if (!title) continue;   // l'API publie parfois des perturbations sans aucun texte
+                    const sameAsTitle = detail.text.replace(/\s+/g, ' ').trim() === title;
+
+                    situations.push({
+                        id: childText(el, 'SituationNumber'),
+                        title,
+                        detailHtml: sameAsTitle ? '' : detail.html,
+                        lines,
+                        places: [...places],
+                        periods,
+                        unplanned: childText(el, 'Planned') === 'false' || /inopin/i.test(childText(el, 'Keywords'))
+                    });
+                }
+                return situations;
+            }
+
+            // HTML de l'API -> HTML sûr (balises de mise en forme, sans attributs) et texte brut.
+            // DOMParser crée un document inerte : rien n'est exécuté ni chargé.
+            cleanHtml(source) {
+                let text = '';
+                if (!source) return { html: '', text };
+                const doc = new DOMParser().parseFromString(source, 'text/html');
+                const walk = (node) => {
+                    let html = '';
+                    for (const child of node.childNodes) {
+                        if (child.nodeType === Node.TEXT_NODE) {
+                            html += Utils.escapeHtml(child.nodeValue);
+                            text += child.nodeValue;
+                        } else if (child.nodeType === Node.ELEMENT_NODE) {
+                            const tag = child.tagName;
+                            if (tag === 'SCRIPT' || tag === 'STYLE' || tag === 'TEMPLATE') continue;
+                            if (tag === 'BR') { html += '<br>'; text += '\n'; continue; }
+                            const inner = walk(child);
+                            html += TrafficManager.ALLOWED_TAGS.has(tag) ? `<${tag.toLowerCase()}>${inner}</${tag.toLowerCase()}>` : inner;
+                            if (TrafficManager.BLOCK_TAGS.has(tag)) text += '\n';
+                        }
+                    }
+                    return html;
+                };
+                const html = walk(doc.body);
+                return { html, text };
+            }
+
+            // ---------- Affichage ----------
+
+            // Lignes et lieux des arrêts choisis : lignes de lines.js, complétées par celles vues en temps réel
+            myContext() {
+                const lines = new Set();
+                const places = new Set(AppState.selectedStops);
+                for (const code of AppState.selectedStops) {
+                    for (const line of STOP_LINE_DATA[code] || []) lines.add(line);
+                    for (const dep of this.transport.cachedByStop[code] || []) if (dep.line) lines.add(dep.line);
+                }
+                return { lines, places };
+            }
+
+            // Période à afficher : celle en cours, sinon la prochaine ; null si tout est terminé
+            timing(situation, now) {
+                const current = situation.periods.find(p => p.start <= now && now <= p.end);
+                if (current) return { state: 'current', period: current };
+                const next = situation.periods.filter(p => p.start > now).sort((a, b) => a.start - b.start)[0];
+                return next ? { state: 'upcoming', period: next } : null;
+            }
+
+            formatPeriod({ start, end }, state) {
+                const fmt = (ms) => PARIS_DAY_TIME.format(new Date(ms));
+                const hasStart = Number.isFinite(start);
+                const hasEnd = Number.isFinite(end);
+                if (hasStart && hasEnd) return `Du ${fmt(start)} au ${fmt(end)}`;
+                if (hasStart) return `${state === 'current' ? 'Depuis le' : 'À partir du'} ${fmt(start)}`;
+                if (hasEnd) return `Jusqu'au ${fmt(end)}`;
+                return 'Sans date de fin';
+            }
+
+            countsLabel() {
+                const { current, upcoming } = this.counts;
+                const where = this.scope === 'mine' ? 'sur vos lignes' : 'sur le réseau';
+                if (current + upcoming === 0) return `aucune perturbation ${where}`;
+                return `${current} en cours, ${upcoming} à venir ${where}`;
+            }
+
+            render() {
+                if (!this.body) return;
+                this.counts = { current: 0, upcoming: 0 };
+                if (!this.situations) {
+                    this.body.innerHTML = '<p class="traffic-empty">Les perturbations du réseau s\'afficheront ici.</p>';
+                    return;
+                }
+                const mine = this.scope === 'mine';
+                const ctx = this.myContext();
+                if (mine && AppState.selectedStops.length === 0) {
+                    this.body.innerHTML = '<p class="traffic-empty">Aucun arrêt sélectionné : ajoutez des arrêts avec « Configurer », ou affichez tout le réseau.</p>';
+                    return;
+                }
+
+                const now = Date.now();
+                // Groupes : code de ligne ; '@<lieu>' pour une perturbation sans ligne qui cite un arrêt ;
+                // '' si elle ne cite ni ligne ni arrêt connu
+                const groups = new Map();
+                const shown = new Map();    // id -> état, pour compter chaque perturbation une fois
+                for (const situation of this.situations) {
+                    const timing = this.timing(situation, now);
+                    if (!timing) continue;   // terminée, même si l'API la publie encore
+                    let lines = situation.lines;
+                    if (mine) {
+                        const myLines = lines.filter(line => ctx.lines.has(line));
+                        const touchesMyStop = situation.places.some(place => ctx.places.has(place));
+                        if (myLines.length === 0 && !touchesMyStop) continue;
+                        if (myLines.length > 0) lines = myLines;
+                    }
+                    let groupKeys = lines;
+                    if (groupKeys.length === 0) {
+                        const places = mine ? situation.places.filter(place => ctx.places.has(place)) : situation.places;
+                        groupKeys = places.length > 0 ? places.map(place => `@${place}`) : [''];
+                    }
+                    for (const key of groupKeys) {
+                        if (!groups.has(key)) groups.set(key, []);
+                        groups.get(key).push({ situation, ...timing });
+                    }
+                    shown.set(situation, timing.state);
+                }
+                for (const state of shown.values()) this.counts[state]++;
+
+                // Ordre : sans ligne ni arrêt, puis arrêts (par nom), puis lignes (ordre du réseau)
+                const rank = (key) => (key === '' ? 0 : key.startsWith('@') ? 1 : 2);
+                const stopName = (key) => stopInfo(key.slice(1)).name;
+                const keys = [...groups.keys()].sort((a, b) => rank(a) - rank(b) ||
+                    (rank(a) === 1 ? Utils.compareNatural(stopName(a), stopName(b)) : rank(a) === 2 ? Utils.compareLines(a, b) : 0));
+                let html = keys.map(key => {
+                    const items = groups.get(key).sort((a, b) =>
+                        (a.state === b.state ? 0 : a.state === 'current' ? -1 : 1) || a.period.start - b.period.start);
+                    let heading;
+                    if (key === '') {
+                        heading = '<i class="fas fa-circle-info" aria-hidden="true"></i> <span>Autres perturbations</span>';
+                    } else if (key.startsWith('@')) {
+                        const { name, duplicate } = stopInfo(key.slice(1));
+                        heading = `<i class="fas fa-bus" aria-hidden="true"></i> <span class="line-name">Arrêt ${Utils.escapeHtml(duplicate ? `${name} (n° ${key.slice(1)})` : name)}</span>`;
+                    } else {
+                        const name = LINE_DATA[key]?.n;
+                        heading = `${Utils.lineBadge(key)}${name ? ` <span class="line-name">${Utils.escapeHtml(name)}</span>` : ''}`;
+                    }
+                    return `<section class="traffic-group"><h3>${heading}</h3><ul class="traffic-list">${items.map(item => this.renderItem(item)).join('')}</ul></section>`;
+                }).join('');
+
+                if (keys.length === 0) {
+                    html = `<p class="traffic-empty">Aucune perturbation en cours ou à venir ${mine ? 'sur vos lignes' : 'sur le réseau'}.</p>`;
+                }
+                if (mine) {
+                    const calm = [...ctx.lines].filter(line => !groups.has(line)).sort(Utils.compareLines);
+                    if (calm.length > 0 && keys.length > 0) {
+                        html += `<p class="traffic-calm">Aucune perturbation signalée sur : ${calm.map(line => Utils.lineBadge(line, 'is-small')).join(' ')}</p>`;
+                    }
+                }
+                this.body.innerHTML = html;
+            }
+
+            renderItem({ situation, state, period }) {
+                const upcoming = state === 'upcoming';
+                const tags = [upcoming
+                    ? '<span class="traffic-tag is-upcoming">À venir</span>'
+                    : '<span class="traffic-tag">En cours</span>'];
+                if (situation.unplanned) tags.push('<span class="traffic-tag is-unplanned">Inopinée</span>');
+                const meta = `<span class="traffic-item-meta">${tags.join('')}<span>${Utils.escapeHtml(this.formatPeriod(period, state))}</span></span>`;
+                const title = `<span class="traffic-item-title">${Utils.escapeHtml(situation.title)}</span>`;
+                const cls = `traffic-item${upcoming ? ' is-upcoming' : ''}`;
+                // detailHtml est déjà nettoyé par cleanHtml
+                if (situation.detailHtml) {
+                    return `<li><details class="${cls}"><summary>${title}${meta}</summary><div class="traffic-detail">${situation.detailHtml}</div></details></li>`;
+                }
+                return `<li><div class="${cls}"><div class="traffic-item-head">${title}${meta}</div></div></li>`;
+            }
+
+            // Ligne d'état et bouton « Actualiser » (appelé chaque seconde par refreshDisplays)
+            refreshStatus() {
+                if (!this.dialog?.open || !this.status) return;
+                const { trafficPending, trafficFetching, fetchInProgress } = this.transport;
+                let text;
+                let isError = false;
+                if (trafficFetching) {
+                    text = 'Chargement de l\'info trafic...';
+                } else if (trafficPending) {
+                    const wait = this.transport.secondsUntilNextFetch();
+                    text = fetchInProgress ? 'Chargement après la requête en cours...'
+                        : wait > 0 ? `Chargement dans ${wait} s (l'API accepte une requête toutes les 30 s)`
+                        : 'Chargement...';
+                } else if (this.error) {
+                    isError = true;
+                    text = this.error + (this.fetchedAt ? ` Infos affichées : ${Utils.formatHourMinute(new Date(this.fetchedAt))}.` : '');
+                } else if (this.fetchedAt) {
+                    text = `Mis à jour à ${Utils.formatHourMinute(new Date(this.fetchedAt))} · ${this.countsLabel()}`;
+                } else {
+                    text = '';
+                }
+                if (this.status.textContent !== text) this.status.textContent = text;
+                this.status.classList.toggle('is-error', isError);
+                if (this.refreshButton) {
+                    this.refreshButton.disabled = trafficPending || trafficFetching;
+                    this.refreshButton.classList.toggle('fetching', trafficFetching);
+                }
+            }
+        }
+
         class DashboardApp {
             constructor() {
                 this.timeManager = null;
                 this.stopManager = null;
                 this.transportManager = null;
+                this.trafficManager = null;
             }
 
             init() {
@@ -2229,9 +2992,12 @@
                     StorageManager.attach(this.transportManager);
                     this.stopManager = new StopManager(this.transportManager);
                     this.transportManager.onSelectionChange = () => this.stopManager.renderStopSelector();
+                    this.trafficManager = new TrafficManager(this.transportManager);
+                    this.transportManager.traffic = this.trafficManager;
                     // Exposés pour le débogage depuis la console
                     window.transportManager = this.transportManager;
                     window.stopManager = this.stopManager;
+                    window.trafficManager = this.trafficManager;
                     this.transportManager.start();
                 } catch (error) {
                     console.error('Erreur initialisation dashboard:', error);

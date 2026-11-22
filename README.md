@@ -16,6 +16,7 @@ Tableau de bord **temps réel** des prochains passages aux arrêts du réseau de
 - Prochains passages en minutes, mis à jour chaque seconde ; retards et suppressions signalés.
 - Pastilles de ligne aux **couleurs officielles Naolib**, dans le tableau, les filtres et la liste d'arrêts (le nom complet de la ligne s'affiche au survol).
 - Filtres par ligne et par destination pour chaque arrêt.
+- **Info trafic** à la demande : travaux, déviations et reports d'arrêt sur les lignes de vos arrêts (ou tout le réseau), avec les dates et le détail. Rien n'est chargé tant qu'on ne clique pas.
 - Actualisation automatique toutes les 30 secondes, avec nouvel essai si le réseau est coupé ; aucune requête tant que l'onglet est masqué.
 - Horloge et calendrier ; interface en français, adaptée au mobile.
 - Aucun serveur, aucun build : tout tourne dans le navigateur.
@@ -39,7 +40,7 @@ L'API impose **une requête toutes les 30 secondes** : si vous modifiez ou dépl
 L'application n'a ni serveur, ni compte, ni cookie, ni outil de mesure d'audience.
 
 - Vos arrêts, vos filtres et les derniers passages reçus sont conservés **uniquement dans le `localStorage` de votre navigateur**, et le bouton « Effacer toutes les données sauvegardées » les supprime.
-- Pour fonctionner, la page contacte **uniquement** `api.okina.fr` (avec les identifiants des quais des arrêts choisis), qui voit l'adresse IP du visiteur. Les polices et les icônes sont servies par le site lui-même : aucun CDN ni service tiers n'est appelé.
+- Pour fonctionner, la page contacte **uniquement** `api.okina.fr` (avec les identifiants des quais des arrêts choisis ; la requête d'info trafic ne contient aucun arrêt), qui voit l'adresse IP du visiteur. Les polices et les icônes sont servies par le site lui-même : aucun CDN ni service tiers n'est appelé.
 
 ## Licence
 
@@ -68,9 +69,20 @@ Pas de build, pas de gestionnaire de paquets, pas de tests, pas de linter. Côt�
 
 Les passages viennent d'un endpoint **SIRI StopMonitoring** (`CONFIG.SIRI_ENDPOINT`, `https://api.okina.fr/gateway/sem/realtime/anshar/services`) par **un seul POST XML** contenant une `StopMonitoringRequest` par quai (`MonitoringRef` = `FR_NAOLIB:Quay:<id>`). La réponse est lue avec `DOMParser` + `getElementsByTagNameNS` dans `TransportManager.parseSiriResponse()`. L'ancienne API `open.tan.fr/ewp` (`arrets.json`, `tempsattente.json`) n'est plus utilisée.
 
-- **Limite : 1 requête / 30 s pour tous les arrêts réunis** (`CONFIG.FETCH_COOLDOWN_S`). Garde dans `loadAllStopsData` via `lastFetchTime` ; sur HTTP 429 on garde le cache. Ne jamais ajouter de requête par arrêt ni de second timer de polling.
+- **Limite : 1 requête / 30 s pour tous les arrêts réunis** (`CONFIG.FETCH_COOLDOWN_S`), info trafic comprise. Garde dans `runScheduledRequest` / `loadAllStopsData` via `lastFetchTime` ; sur HTTP 429 on garde le cache. Ne jamais ajouter de requête par arrêt ni de second timer de polling.
 - **Les arrêts sont embarqués, pas téléchargés.** `STOP_LIST` (`stops.js`) vaut `[nom, placeId, [quayIds]]`. Au démarrage, il produit `STOP_MAP` (placeId → {name, quays}) et `QUAY_TO_PLACE` (quayId → placeId). Le « code d'arrêt » utilisé partout (`AppState.selectedStops`, `data-stop-code`, ids DOM `content-<code>` / `filter-<code>`) est le **placeId sous forme de chaîne** ; un lieu regroupe plusieurs quais, et les réponses sont regroupées par lieu dans `loadAllStopsData`.
 - Forme normalisée d'un passage : `{ quayId, stopPlaceId, line, destination, vehicleMode, expectedTime, aimedTime, status, cancelled }`. `status` vient de `DepartureStatus` (sinon `ArrivalStatus`) ; `cancelled` est vrai si le statut contient « cancel ». Les helpers `getLigne` / `getTerminus` renvoient les sentinelles `'N/A'` / `'Direction inconnue'`, que la logique de filtres teste.
+
+### Info trafic : SIRI Situation Exchange
+
+Les perturbations viennent du **même endpoint**, par une `SituationExchangeRequest` (sans filtre : la passerelle ignore `LineRef` et renvoie tout le réseau, environ 170 Ko, compressés à l'envoi). Points vérifiés sur l'API réelle :
+
+- **Impossible de la combiner** avec les `StopMonitoringRequest` dans un même `ServiceRequest` : la passerelle ne répond alors qu'au Situation Exchange. C'est donc une requête à part, qui **prend le créneau de 30 s** des passages.
+- Chargement **uniquement au clic** (« Info trafic » à la première ouverture, puis « Actualiser ») : `TrafficManager.request()` → `TransportManager.requestTraffic()` met `trafficPending` ; au créneau suivant, `runScheduledRequest()` envoie l'info trafic **à la place** des passages, qui attendent le créneau d'après. Fermer la fenêtre avant le créneau annule la demande (`cancelTraffic`). Les données restent en mémoire pour la session, sans `localStorage`.
+- Lecture dans `TrafficManager.parseSituations()` : lignes depuis `Affects//LineRef` (format `FR_NAOLIB:Line:<code>:LOC`, normalisé comme pour les passages), arrêts depuis `StopPointRef` (quai → lieu via `QUAY_TO_PLACE`) et `StopPlaceRef`. Titre = `Summary`, souvent vide : on prend alors la première ligne du texte. Détail = `Description`, sinon le `Prompt` de l'action `SiteWeb`. Les perturbations sans aucun texte sont ignorées.
+- Le détail est du **HTML fourni par l'API** : il passe par `cleanHtml()` (liste blanche `p`, `strong`, `b`, `em`, `i`, `ul`, `ol`, `li`, `br`, sans attributs ; le reste réduit à son texte échappé). Ne jamais l'insérer tel quel.
+- **Dates filtrées côté navigateur** : l'API publie encore (`Progress` = `open`) des perturbations terminées depuis des mois. Seules celles dont une `ValidityPeriod` est en cours ou à venir s'affichent. `Severity` (presque toujours `noImpact`) et `MiscellaneousReason` (toujours `roadworks`) ne sont pas fiables et ne sont pas utilisés ; « Inopinée » vient de `Planned` = `false` ou de `Keywords`.
+- « Mes lignes » = lignes de `STOP_LINES` pour les arrêts choisis, complétées par celles vues dans le cache des passages, plus les perturbations qui citent directement un de ces arrêts. Regroupement par ligne ; une perturbation sans ligne est rangée sous son arrêt.
 
 ### Architecture (script inline)
 
@@ -83,13 +95,14 @@ Les passages viennent d'un endpoint **SIRI StopMonitoring** (`CONFIG.SIRI_ENDPOI
 | `Utils` | Formats date/heure (fr-FR, Europe/Paris), `escapeHtml` (sûr aussi dans les attributs), `fetchText` (délai couvrant aussi la lecture du corps), `compareNatural` / `compareLines` (ordre du réseau), `lineColors` / `lineBadge` (pastilles de ligne) |
 | `TimeManager` | Horloge (1 s) ; date et calendrier reconstruits seulement au changement de jour |
 | `StopManager` | Sélecteur d'arrêts avec recherche et panneau de configuration |
-| `TransportManager` | Cartes d'arrêt, requête/lecture SIRI, filtres, glisser-déposer, décompte, rafraîchissement de l'affichage |
-| `DashboardApp` | Orchestre au `DOMContentLoaded` ; expose `window.transportManager` / `window.stopManager` pour le débogage console uniquement |
+| `TransportManager` | Cartes d'arrêt, requête/lecture SIRI, filtres, glisser-déposer, décompte, rafraîchissement de l'affichage ; seul à envoyer des requêtes (passages et info trafic) |
+| `TrafficManager` | Fenêtre « Info trafic » (`<dialog>`) : construction et lecture de la requête Situation Exchange, nettoyage du HTML, filtre « Mes lignes » / « Tout le réseau », état du chargement |
+| `DashboardApp` | Orchestre au `DOMContentLoaded` ; expose `window.transportManager` / `window.stopManager` / `window.trafficManager` pour le débogage console uniquement |
 
 Points qui traversent plusieurs classes :
 
-- **Ordre d'initialisation** (`DashboardApp.init`) : `StorageManager.load()` → `TimeManager` → `TransportManager(saved)` → `StorageManager.attach()` → `StopManager(transportManager)` → `transportManager.onSelectionChange` (rappel qui rafraîchit le sélecteur quand un widget retire un arrêt) → `transportManager.start()`. Les classes ne passent pas par `window.*`.
-- **Le décompte pilote les requêtes.** `startCountdown()` relit `secondsUntilNextFetch()` chaque seconde et appelle `loadAllStopsData()` à 0 ; `loadAllStopsData()` relance `startCountdown()` à la fin (succès, 429 ou erreur). Pas de timer par arrêt.
+- **Ordre d'initialisation** (`DashboardApp.init`) : `StorageManager.load()` → `TimeManager` → `TransportManager(saved)` → `StorageManager.attach()` → `StopManager(transportManager)` → `transportManager.onSelectionChange` (rappel qui rafraîchit le sélecteur quand un widget retire un arrêt) → `TrafficManager(transportManager)`, branché sur `transportManager.traffic` → `transportManager.start()`. Les classes ne passent pas par `window.*`.
+- **Le décompte pilote les requêtes.** `startCountdown()` relit `secondsUntilNextFetch()` chaque seconde et appelle `runScheduledRequest()` à 0, qui lance `loadTraffic()` si l'info trafic est demandée, sinon `loadAllStopsData()` ; les deux relancent `startCountdown()` à la fin (succès, 429 ou erreur). Pas de timer par arrêt. L'état de la fenêtre d'info trafic (« Chargement dans Ns ») est rafraîchi par `refreshDisplays`, sans timer propre.
 - **Erreur réseau / HTTP / XML illisible** : `lastFailed = true`, `lastFetchTime = maintenant`, nouvel essai automatique 30 s plus tard (libellé « Réessai dans Ns »). Le bouton d'actualisation n'est activé (`disabled` levé, classe `.ready`) que 5 s après une erreur (`CONFIG.MIN_MANUAL_RETRY_MS`) et permet alors de forcer l'essai (`forceRefresh` → `loadAllStopsData(true)`) : pas de rafale vers l'API.
 - **Onglet masqué** : le décompte n'envoie pas de requête et `refreshDisplays` ne redessine rien ; au retour (`visibilitychange`), l'affichage est rafraîchi et la requête part si le délai est écoulé.
 - **Requête et sélection** : `loadAllStopsData` ne met à jour que les arrêts de la liste `requested` (instantané pris à l'envoi) ; un arrêt ajouté pendant la requête attend le cycle suivant au lieu d'afficher à tort « Aucun passage prévu ». `lastFetchTime` lu dans le stockage est ignoré s'il est illisible ou dans le futur.
